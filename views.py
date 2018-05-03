@@ -2,12 +2,36 @@ from models import Delivery, DeliverySchema, Shippment, ShippmentSchema
 from main import db, app
 from flask import request, jsonify, render_template
 from datetime import datetime
+from flask_migrate import init, migrate, upgrade, Migrate
 
 delivery_schema = DeliverySchema()
 deliveries_schema = DeliverySchema(many=True)
 
 shippment_schema = ShippmentSchema()
 shippments_schema = ShippmentSchema(many=True)
+
+# url to initiate flask migration
+@app.route('/admin/dbinit')
+def dbinit():
+    try:
+        migrate_dict = Migrate(app, db)
+        print(migrate_dict.directory)
+        init(directory=migrate_dict.directory)
+        return 'db initiated'
+    except Exception as e: 
+        return str(e)
+
+# url to update tables in db
+@app.route('/admin/dbupgrade')
+def dbupgrade():
+    try:
+        migrate_dict = Migrate(app, db)
+        migrate(directory=migrate_dict.directory)
+        upgrade(directory=migrate_dict.directory)
+        all_tables = ' <br/>'.join(map(str, db.engine.table_names()))
+        return 'Tables upgraded in database <br/>' + all_tables
+    except Exception as e: 
+        return str(e)
 
 # Main landing page
 @app.route("/")

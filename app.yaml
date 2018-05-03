@@ -13,6 +13,11 @@ libraries:
 
 # Handlers define how to route requests to your application.
 handlers:
+- url: /(.*\.js)
+  mime_type: text/javascript
+  static_files: static/\1
+  upload: static/(.*\.js)
+
 - url: .* # This regex directs all routes to main.app
   script: main.app
 
