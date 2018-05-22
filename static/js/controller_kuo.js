@@ -207,7 +207,8 @@ myApp.controller('formCtrl', function($scope,$http) {
         //計價公式
             if (floor > 0)
                 floor = floor - 1;
-            order.delivery_fee = Math.max.apply(null, basic_fee) + 100 * (basic_fee.length - 1 + floor + elevator)
+            order.delivery_fee 
+            = Math.max.apply(null, basic_fee) + 100 * (basic_fee.length - 1 + floor + elevator)
             $('#fee_result').val(order.delivery_fee);
             $('#commentText').val(comment);
             return true;
@@ -224,7 +225,7 @@ myApp.controller('formCtrl', function($scope,$http) {
         $("input[type=text]").attr("disabled", "disabled");
         $("input[type=select]").attr("disabled", "disabled");
         
-        var LOCAL_SUBMIT_ORDER_API = "https://jt-erp.appspot.com/order";
+        var SUBMIT_ORDER_API = "https://ct-erp.appspot.com/order";
         var submitOrder;
         submitOrder = order;
         submitOrder.delivery_date = $('#datepicker').val();
@@ -237,15 +238,17 @@ myApp.controller('formCtrl', function($scope,$http) {
         });
         try{
             $http({
-                url: LOCAL_SUBMIT_ORDER_API,                         
+                url: SUBMIT_ORDER_API,                         
                 method: "POST",
                 data: submitOrder,
                 headers:{'Content-Type': 'application/json','Access-Control-Allow-Origin': '*' }
             })
             .then(function(response) {
                 if (response.status === 200) {
-                    alert('新增成功'); 
-                    setTimeout(function(){ location.reload(); }, 2000);
+                	alert(response.data);
+                    if (response.data === "新增成功"){
+                        setTimeout(function(){ location.reload(); }, 2000);
+                    }
                 } 
                 else {
                     throw '系統出現問題，請通知工程師處理 "level:1" \n'+ response.data;

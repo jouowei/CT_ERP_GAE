@@ -164,7 +164,7 @@ def add_order_new():
                         raise
             else:
                 return 'Error: no shippment in this order'
-            return '{}'.format(new_delivery)
+            return '新增成功'
         else: 
             return 'this order is already exist'
         # return jsonify(rawdata)
