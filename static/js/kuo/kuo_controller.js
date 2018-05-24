@@ -224,7 +224,11 @@ myApp.controller('formCtrl', function($scope,$http) {
         $("input[type=text]").attr("disabled", "disabled");
         $("input[type=select]").attr("disabled", "disabled");
         
-        var LOCAL_SUBMIT_ORDER_API = "https://jt-erp.appspot.com/order";
+        /*
+        var SUBMIT_ORDER_API = "https://ct-erp.appspot.com/order";
+        var SUBMIT_ORDER_API = "https://jt-erp.appspot.com/order";
+        */
+        var SUBMIT_ORDER_API = "http://localhost/order";
         var submitOrder;
         submitOrder = order;
         submitOrder.delivery_date = $('#datepicker').val();
@@ -237,15 +241,17 @@ myApp.controller('formCtrl', function($scope,$http) {
         });
         try{
             $http({
-                url: LOCAL_SUBMIT_ORDER_API,                         
+                url: SUBMIT_ORDER_API,                         
                 method: "POST",
                 data: submitOrder,
                 headers:{'Content-Type': 'application/json','Access-Control-Allow-Origin': '*' }
             })
             .then(function(response) {
                 if (response.status === 200) {
-                    alert('新增成功'); 
-                    setTimeout(function(){ location.reload(); }, 2000);
+                	alert(response.data);
+                    if (response.data === "新增成功"){
+                        setTimeout(function(){ location.reload(); }, 2000);
+                    }
                 } 
                 else {
                     throw '系統出現問題，請通知工程師處理 "level:1" \n'+ response.data;

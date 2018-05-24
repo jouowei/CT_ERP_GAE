@@ -34,4 +34,4 @@ env_variables:
 
 beta_settings:
     # replace with your connectionName [project1:us-central1:instance1]
-    cloud_sql_instances: ct-erp:asia-east1:ctdb1
+    cloud_sql_instances: jt-erp:asia-east1:ctdb1

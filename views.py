@@ -47,106 +47,145 @@ def dbupgrade():
     except Exception as e: 
         return str(e)
 
+def checkKey(data,key):
+    if key not in data:
+        return ''
+    else: 
+        return data[key]
+
+# submit data into DB
+def add_order_new(rawdata):
+    arrShippment = []
+    if len(checkKey(rawdata,'order_ID')) > 0:
+        order_ID = checkKey(rawdata,'order_ID')
+    else:
+        return 'Error: unfound key "order_ID"'
+    clientname = checkKey(rawdata,'clientname')
+    business_type = checkKey(rawdata,'business_type')
+    delivery_date = checkKey(rawdata,'delivery_date')
+    delivery_fee = checkKey(rawdata,'delivery_fee')
+    car_type = checkKey(rawdata,'car_type')
+    car_ID = checkKey(rawdata,'car_ID')
+    good_size = checkKey(rawdata,'good_size')
+    comment = checkKey(rawdata,'comment')
+    ships = checkKey(rawdata,'ships')
+    # 建立Shippments
+    for ship in ships:
+        if len(checkKey(ship,'ship_ID')) > 0 :
+            ship_ID = checkKey(ship,'ship_ID')
+        else:
+            return 'Error: unfound key "ship_ID"'
+        contact_info = checkKey(ship,'contact_info')
+        ship_orderStore = checkKey(ship,'ship_orderStore')
+        ship_datetime = checkKey(ship,'ship_datetime')
+        ship_area = checkKey(ship,'ship_area')
+        ship_district = checkKey(ship,'ship_district')
+        driver = checkKey(ship,'ship_driver')
+        is_elevator = checkKey(ship,'is_elevator')
+        floors_byhand = checkKey(ship,'floors_byhand')
+        amount_collect = checkKey(ship,'amount_collect')
+        ship_comment = checkKey(ship,'comment')
+        result_ship = Shippment.query.with_for_update().filter_by(ship_ID=ship_ID,driver=driver).first()
+            # 取消檢查ship_ID是否重複，但是以下廠商在傳入時，須確保ship_ID是唯一的:
+            #   1.郭元益
+        if result_ship is None: 
+            arrShippment.append(Shippment(ship_ID,order_ID,contact_info,ship_orderStore,ship_datetime,ship_area,ship_district,driver,car_type,car_ID,is_elevator,floors_byhand,amount_collect,ship_comment))
+        
+    # 查詢此Order是否已存在
+    result_delivery = Delivery.query.with_for_update().filter_by(order_ID=order_ID).first()
+    # 資料庫沒有此Order => 新增Order
+    if result_delivery is None:
+        new_delivery = Delivery(business_type,order_ID,clientname,delivery_date,delivery_fee,good_size,comment)
+        try:
+            db.session.add(new_delivery)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            raise
+        # 如果Ships超過一筆，逐筆加入
+        if len(arrShippment) > 0:
+            for oneShip in arrShippment:
+                try:
+                    db.session.add(oneShip)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+                    raise
+        else:
+            return 'Error: no shippment or shippment duplicated'
+        return '新增成功'
+    else: 
+        return 'Notice: This order already exists'
+
 # new endpoint to parse post with Json array
 @app.route("/order", methods=["POST"])
-def add_order_new():
-    arrShippment = []
+def acceptPOST():
     if request.json:
         rawdata = request.get_json(force=True)
-        # 建立Order
-        if 'order_ID' not in rawdata:
-            order_ID = ""
-            return 'Error: "order ID" not exist'
-        else: 
-            order_ID = rawdata['order_ID']
-        if 'clientname' not in rawdata:
-            clientname = ""
-        else: 
-            clientname = rawdata['clientname']
-        if 'businesstype' not in rawdata:
-            businesstype = ""
-        else: 
-            businesstype = rawdata['businesstype']
-        if 'delivery_date' not in rawdata:
-            delivery_date = ""
-        else: 
-            delivery_date = rawdata['delivery_date']
-        if 'delivery_fee' not in rawdata:
-            delivery_fee = ""
-        else: 
-            delivery_fee = rawdata['delivery_fee']
-        if 'car_type' not in rawdata:
-            car_type = ""
-        else: 
-            car_type = rawdata['car_type']
-        if 'car_ID' not in rawdata:
-            car_ID = ""
-        else: 
-            car_ID = rawdata['car_ID']
-        if 'comment' not in rawdata:
-            comment = ""
-        else: 
-            comment = rawdata['comment']
-        if 'ships' not in rawdata:
-            ships = []
-            return 'Error: "ships" not exist'
+        # 透過檢查order_ID來確定這是array of jsons還是json
+        if len(checkKey(rawdata,'order_ID')) == 0:
+            result = ""
+            for data in rawdata:
+                result = add_order_new(data)
+                if len(result) > 0 and result != '新增成功':
+                    return result
+                else:
+                    continue
+            return result
         else:
-            ships = rawdata['ships']
-            #建立Shippments
-            for ship in ships:
-                if 'ship_ID' not in ship:
-                    return 'Error: "ship ID" in some ships not exist'
-                else:
-                    ship_ID = ship['ship_ID']
-                if 'contact_info' not in ship:
-                    contact_info = ''
-                else:
-                    contact_info = ship['contact_info']
-                if 'ship_orderStore' not in ship:
-                    ship_orderStore = ''
-                else:
-                    ship_orderStore = ship['ship_orderStore']
-                if 'ship_datetime' not in ship:
-                    ship_datetime = ''
-                else:
-                    ship_datetime = ship['ship_datetime']
-                if 'ship_area' not in ship:
-                    ship_area = ''
-                else:
-                    ship_area = ship['ship_area']
-                if 'ship_district' not in ship:
-                    ship_district = ''
-                else:
-                    ship_district = ship['ship_district']
-                if 'ship_driver' not in ship:
-                    driver = ''
-                else:
-                    driver = ship['ship_driver']
-                if 'is_elevator' not in ship:
-                    is_elevator = ''
-                else:
-                    is_elevator = ship['is_elevator']
-                if 'floors_byhand' not in ship:
-                    floors_byhand = ''
-                else:
-                    floors_byhand = ship['floors_byhand']
-                if 'amount_collect' not in ship:
-                    amount_collect = ''
-                else:
-                    amount_collect = ship['amount_collect']
-                if 'comment' not in ship:
-                    ship_comment = ''
-                else:
-                    ship_comment = ship['comment']
-                result_ship = Shippment.query.with_for_update().filter_by(ship_ID=ship_ID).first()
-                if result_ship is None: 
-                    arrShippment.append(Shippment(ship_ID,order_ID,contact_info,ship_orderStore,ship_datetime,ship_area,ship_district,driver,car_type,car_ID,is_elevator,floors_byhand,amount_collect,ship_comment))
+            return add_order_new(rawdata)
+    else:
+        return 'Error: no data in the POST request'
+
+# new endpoint to parse post with Json array
+@app.route("/order_old", methods=["POST"])
+def add_order():
+    if request.json:
+        arrShippment = []
+        rawdata = request.get_json(force=True)
+        if len(checkKey(rawdata,'order_ID')) > 0:
+            order_ID = checkKey(rawdata,'order_ID')
+        else:
+            return 'Error: unfound key "order_ID"'
+        clientname = checkKey(rawdata,'clientname')
+        businesstype = checkKey(rawdata,'business_type')
+        delivery_date = checkKey(rawdata,'delivery_date')
+        delivery_fee = checkKey(rawdata,'delivery_fee')
+        car_type = checkKey(rawdata,'car_type')
+        car_ID = checkKey(rawdata,'car_ID')
+        good_size = checkKey(rawdata,'good_size')
+        comment = checkKey(rawdata,'comment')
+        ships = checkKey(rawdata,'ships')
+        # 建立Shippments
+        for ship in ships:
+            if len(checkKey(ship,'ship_ID')) > 0 :
+                ship_ID = checkKey(ship,'ship_ID')
+            else:
+                return 'Error: unfound key "ship_ID"'
+            if len(checkKey(ship,'ship_driver')) > 0 :
+                driver = checkKey(ship,'ship_driver')
+            else:
+                return 'Error: unfound key "driver"'
+            contact_info = checkKey(ship,'contact_info')
+            ship_orderStore = checkKey(ship,'ship_orderStore')
+            ship_datetime = checkKey(ship,'ship_datetime')
+            ship_area = checkKey(ship,'ship_area')
+            ship_district = checkKey(ship,'ship_district')
+            is_elevator = checkKey(ship,'is_elevator')
+            floors_byhand = checkKey(ship,'floors_byhand')
+            amount_collect = checkKey(ship,'amount_collect')
+            ship_comment = checkKey(ship,'comment')
+            result_ship = Shippment.query.with_for_update().filter_by(ship_ID=ship_ID,driver=driver).first()
+            # 取消檢查ship_ID是否重複，但是以下廠商在傳入時，須確保ship_ID是唯一的:
+            #   1.郭元益
+            if result_ship is None: 
+                arrShippment.append(Shippment(ship_ID,order_ID,contact_info,ship_orderStore,ship_datetime,ship_area,ship_district,driver,car_type,car_ID,is_elevator,floors_byhand,amount_collect,ship_comment))
 
         # 查詢此Order是否已存在
         result_delivery = Delivery.query.with_for_update().filter_by(order_ID=order_ID).first()
         # 資料庫沒有此Order => 新增Order
         if result_delivery is None:
-            new_delivery = Delivery(businesstype,clientname,order_ID,delivery_date,delivery_fee,comment)
+            new_delivery = Delivery(businesstype,order_ID,clientname,delivery_date,delivery_fee,good_size,comment)
             try:
                 db.session.add(new_delivery)
                 db.session.commit()
@@ -163,66 +202,14 @@ def add_order_new():
                         db.session.rollback()
                         raise
             else:
-                return 'Error: no shippment in this order'
-            return '{}'.format(new_delivery)
+                return 'Error: no shippment or shippment duplicated'
+            return '新增成功'
         else: 
-            return 'this order is already exist'
-        # return jsonify(rawdata)
+            return 'Notice: This order already exists'
     else:
         return 'Error: no data in the POST request'
+        # return jsonify(rawdata)
 
-# endpoint to create new delivery entry
-@app.route("/order_old", methods=["POST"])
-def add_order():
-    result_delivery = Delivery.query.with_for_update().filter_by(order_ID=request.json['order_ID']).first()
-    if result_delivery is None:
-        new_delivery = Delivery(
-            request.json['businesstype'], 
-            request.json['clientname'], 
-            request.json['order_ID'],
-            request.json['delivery_date'],
-            request.json['delivery_fee'],
-            request.json['comment']
-            )
-        try:
-            db.session.add(new_delivery)
-            db.session.commit()
-        except:
-            db.session.rollback()
-            raise
-        finally:
-            db.session.close()
-            
-    result_ship = Shippment.query.with_for_update().filter_by(ship_ID=request.json['ship_ID']).first()
-    if result_ship is None: 
-        new_shippment = Shippment(
-            request.json['ship_ID'],
-            request.json['order_ID'],  
-            request.json['contact_info'],
-            request.json['ship_orderStore'],
-            request.json['ship_datetime'],
-            request.json['ship_area'],
-            request.json['ship_district'],
-            request.json['driver'],
-            request.json['car_type'],
-            request.json['car_ID'],
-            request.json['is_elevator'],
-            request.json['floors_byhand'],
-            request.json['amount_collect'],
-            request.json['ship_comment']
-            )
-        try:
-            db.session.add(new_shippment)
-            db.session.commit()
-        except:
-            db.session.rollback()
-            raise
-        finally:
-            db.session.close()
-            return '{}'.format(new_shippment)
-    else:
-        return 'this shippment is already exist'
-    
 # endpoint to create new delivery entry
 @app.route("/delivery", methods=["POST"])
 def add_delivery():
@@ -230,10 +217,11 @@ def add_delivery():
     if result_delivery is None:
         new_delivery = Delivery(
             request.json['businesstype'], 
-            request.json['clientname'], 
             request.json['order_ID'],
+            request.json['clientname'], 
             request.json['delivery_date'],
             request.json['delivery_fee'],
+            request.json['good_size'],
             request.json['comment']
             )
         try:
@@ -459,4 +447,3 @@ def shippment_delete(id):
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
-    db.session.remove()
