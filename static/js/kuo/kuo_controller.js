@@ -35,7 +35,7 @@ myApp.directive('customAutofocus', function() {
 //資料控制部分
 myApp.controller('formCtrl', function($scope,$http) {
     $scope.order = order;
-    $scope.order.businesstype = "郭元益";
+    $scope.order.business_type = "郭元益";
     $scope.order.ships = ships;
     $scope.order_store = order_store;
     $scope.drivers = drivers;
@@ -207,8 +207,7 @@ myApp.controller('formCtrl', function($scope,$http) {
         //計價公式
             if (floor > 0)
                 floor = floor - 1;
-            order.delivery_fee 
-            = Math.max.apply(null, basic_fee) + 100 * (basic_fee.length - 1 + floor + elevator)
+            order.delivery_fee = Math.max.apply(null, basic_fee) + 100 * (basic_fee.length - 1 + floor + elevator)
             $('#fee_result').val(order.delivery_fee);
             $('#commentText').val(comment);
             return true;
@@ -225,7 +224,11 @@ myApp.controller('formCtrl', function($scope,$http) {
         $("input[type=text]").attr("disabled", "disabled");
         $("input[type=select]").attr("disabled", "disabled");
         
+        var SUBMIT_ORDER_API = "https://jt-erp.appspot.com/order";
+        /*
         var SUBMIT_ORDER_API = "https://ct-erp.appspot.com/order";
+        var SUBMIT_ORDER_API = "http://localhost/order";
+        */
         var submitOrder;
         submitOrder = order;
         submitOrder.delivery_date = $('#datepicker').val();
