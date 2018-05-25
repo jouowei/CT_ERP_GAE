@@ -1,6 +1,6 @@
 //出貨單schema
 var order = {
-        business_type:'',       //出貨單類型
+        business_type:'郭元益',       //出貨單類型
         delivery_date:'',       //出貨日期 (送到客戶端)
         client_name:'',         //客戶名稱
         order_ID:'',            //出貨單號

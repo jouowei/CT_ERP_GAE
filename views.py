@@ -52,7 +52,6 @@ def checkKey(data,key):
         return ''
     else: 
         return data[key]
-
 # submit data into DB
 def add_order_new(rawdata):
     arrShippment = []
@@ -447,3 +446,4 @@ def shippment_delete(id):
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
+    db.session.remove()
