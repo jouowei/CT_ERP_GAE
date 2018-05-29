@@ -9,19 +9,21 @@
 	<script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/js/gijgo.min.js" type="text/javascript"></script>
 	<link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.10/angular.min.jss"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.10/angular.min.js"></script>
 
 	<title>市面物流配送填單系統</title>
 	<script type="text/javascript" src="js/rawdata.js"></script>
 	<script type="text/javascript" src="js/navbar.js"></script><!-- 上方導覽列 -->
-	<script type="text/javascript" src="js/kuo/kuo_rawdata.js"></script>
-	<script type="text/javascript" src="js/kuo/kuo_controller.js"></script>
 </head>
-<body ng-app="deliveyform" ng-controller="formCtrl">
+<body>
 	<!-- 下方填單頁 -->
 	<div class="jumbotron text-center">
-		<h1>歡迎進入填單系統</h1>
-		<p>請選擇上方功能開始使用</p> 
+		<h1>旺家出貨單</h1>
+		<p>請依次填入需要的資訊</p> 
+	</div>
+	<div class="container" ng-app="lianhua_form" ng-controller="formCtrl" >
+		<input type="file" class="btn btn-info "  id="files" multiple> 
+		<input type="button" class="btn btn-lg btn-info " id="cal_fee" value="上傳" ng-model="rawdata" ng-click="parseFiles()" />
 	</div>
 </body>
 </html>
