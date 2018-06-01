@@ -27,7 +27,9 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 					alert("資料量過大，請拆成幾個10MB以下的檔案");
 					return;	
 				}
-				if (files[i].type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || files[i].type === "application/vnd.ms-excel" || files[i].type === "text/csv") {
+				if (files[i].type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+				|| files[i].type === "application/vnd.ms-excel" 
+				|| files[i].type === "text/csv") {
 					//xlsx
 					var reader = new FileReader();
 					reader.onload = function (evt) {
