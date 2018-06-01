@@ -15,6 +15,9 @@ var lianhua = function(){
     this.comment = "";              //備註
 };
 
+//讀取csv的欄位名稱
+var key = ["預計揀貨日", "承諾交貨日", "送貨地址", "車次", "單據類型", "單據號碼", "說明", "縣市", "鄉鎮市區", "出貨材積(立方米)"];
+
 //出貨單schema
 var order = function(){ 
     this.business_type = '聯華';       //出貨單類型
