@@ -250,7 +250,7 @@ myApp.controller('formCtrl', function($scope,$http) {
                 if (response.status === 200) {
                 	alert(response.data);
                     if (response.data === "新增成功"){
-                        setTimeout(function(){ location.reload(); }, 2000);
+                        setTimeout(function(){ location.reload(); }, 1500);
                     }
                 } 
                 else {

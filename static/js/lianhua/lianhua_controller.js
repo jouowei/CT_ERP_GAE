@@ -66,7 +66,7 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 			submitOrder = new order();
 			submitOrder.order_ID = x.order_ID;
 			submitOrder.delivery_date = x.pickupdate;
-			submitOrder.client_name = x.contact_info;
+			submitOrder.clientname = x.contact_info;
 			submitOrder.good_size = x.good_size;
 			submitOrder.delivery_fee = x.delivery_fee;
 			submitOrder.comment = x.comment;
@@ -89,12 +89,11 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
         $("input[type=text]").attr("disabled", "disabled");
         $("input[type=select]").attr("disabled", "disabled");
         
-        
-        var SUBMIT_ORDER_API = "https://jt-erp.appspot.com/order";
         /*
+        var SUBMIT_ORDER_API = "https://jt-erp.appspot.com/order";
         var SUBMIT_ORDER_API = "https://ct-erp.appspot.com/order";
-        var SUBMIT_ORDER_API = "http://localhost/order";
         */
+        var SUBMIT_ORDER_API = "http://localhost/order";
         try{
             $http({
                 url: SUBMIT_ORDER_API,                         

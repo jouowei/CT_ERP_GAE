@@ -28,7 +28,6 @@ function errorFn(error, file){
 }
 function completeFn(){
 	var rawArr = new Array();
-	
     end = performance.now();
 	if (arguments[0] && arguments[0].data){
         rows = arguments[0].data.length;
@@ -137,18 +136,10 @@ function orderBuilder(){
 	// return JSON.parse(JSON.stringify(cleans));
 }
 
-function getValueByKey(key,data){
-    for(i=0;i<data.length;i++){
-        if(data[i] && data[i].hasOwnProperty(key)) {
-            return data[i][key];
-        }
-    }
-    return -1;
-}
-
 ///聯華運費計算公式： CBM 數量 => 判斷是指定倉庫，工廠或是其他地方 => 地區(台南/高屏) => 計算出對應的價格
-function calTotalPrice(unit, type, area){
-    if(area.includes("屏東") || area.includes("高雄") ){
+function calTotalPrice(unit, type, area) {
+    //高屏計價方式相同
+    if (findObjInArray(["高雄", "屏東"], area).length > 0) {  
         area = "高雄市";
     }
     var arrX = lianhua_shipfee.filter(function(e) {return(e.shipto === area && e.type === type);})
@@ -158,5 +149,3 @@ function calTotalPrice(unit, type, area){
         }
     }
 }
-//讀取csv的欄位名稱
-var key = ["預計揀貨日","承諾交貨日","送貨地址","車次","單據類型","單據號碼","說明","縣市","鄉鎮市區","出貨材積(立方米)"];

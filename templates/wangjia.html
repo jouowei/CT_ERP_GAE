@@ -1,29 +1,129 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-<head>
-	<meta content="text/html; charset=utf-8" http-equiv="content-type">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/js/gijgo.min.js" type="text/javascript"></script>
-	<link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.10/angular.min.js"></script>
 
-	<title>市面物流配送填單系統</title>
-	<script type="text/javascript" src="js/rawdata.js"></script>
-	<script type="text/javascript" src="js/navbar.js"></script><!-- 上方導覽列 -->
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.10/angular.min.js"></script>
+
+    <title>市面物流配送填單系統</title>
+    <script type="text/javascript" src="js/rawdata.js"></script>
+    <script type="text/javascript" src="js/navbar.js"></script>
+	<script type="text/javascript" src="js/lib/moment.min.js"></script>
+    <script type="text/javascript" src="js/lib/xlsx.full.min.js"></script>
+    <script type="text/javascript" src="js/wangjia/wangjia_controller.js"></script>
+    <script type="text/javascript" src="js/wangjia/wangjia_rawdata.js"></script>
+    <script type="text/javascript" src="js/wangjia/wangjia_ext.js"></script>
 </head>
+
 <body>
-	<!-- 下方填單頁 -->
-	<div class="jumbotron text-center">
-		<h1>旺家出貨單</h1>
-		<p>請依次填入需要的資訊</p> 
-	</div>
-	<div class="container" ng-app="lianhua_form" ng-controller="formCtrl" >
-		<input type="file" class="btn btn-info "  id="files" multiple> 
-		<input type="button" class="btn btn-lg btn-info " id="cal_fee" value="上傳" ng-model="rawdata" ng-click="parseFiles()" />
-	</div>
+    <!-- 下方填單頁 -->
+    <div class="jumbotron text-center">
+        <h1>旺家填單介面</h1>
+        <p>注意：不會處理高雄台南屏東以外地區的送貨單</p>
+        
+    </div>
+    <div class="container" ng-app="wangjia_form" ng-controller="formCtrl">
+        <input type="file" class="btn btn-info " id="files">
+        <input type="button" class="btn btn-lg btn-info " id="cal_fee" value="上傳" ng-model="rawdata" ng-click="getSheetName()" />
+        <div id="tab_picker" ng-show="showTabPicker">
+            <br> 請選擇一個要處理的分頁
+            <br>
+            <div style="border:3px dashed #138496;">
+                <input type="button" class="btn btn-lg btn-secondary" value="{{sheetsList}}" 
+                    ng-repeat="sheetsList in sheetsList" 
+                    ng-model="sheetsList"
+                    ng-click="parseFiles(sheetsList)" 
+                    style="margin:2px;"> </input>
+            </div>
+        </div>
+            <br>
+        <div ng-show="showTable">
+            <form id="order_form" ng-submit="submitForm()">
+                <table id="ship_table" class="table order-list table-responsive-sm">
+                    <thead class="thead-light">
+                        <tr>
+                            <th rowspan="2">#</th>
+                            <th>送貨車次</th>
+                            <th>司機姓名</th>
+                            <th>日期</th>
+                            <th>送貨地點</th>
+                            <th>單據號碼</th>
+                            <th>材積數</th>
+                            <th>運費</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblShipContent" ng-repeat="ship in wangjias">
+                        <tr>
+                            <th valign="center" rowspan="0">{{$index+1}}</th>
+                            <td>
+                                {{ ship.order_ID }}
+                            </td>
+                            <td>
+                                <select ng-model="ship.driver" ng-options="drivers for drivers in drivers" class="form-control custom-select" style="width:auto;" required/>
+                                </select>
+                            </td>
+                            <td style="width:11%">
+                                製單：{{ ship.pickupdate | date:'MM-dd'}}
+                                <br> 送貨：{{ ship.shipdate | date:'MM-dd' }}
+                            </td>
+                            <td>
+                                {{ship.clientname}}<br>
+                                {{ship.contact_info}}<br> 
+                            </td>
+                            <td>
+                                <textarea type="text" class="form-control" rows="2" style="width:144px;" ng-list="&#10;" ng-model="ship.ship_ID" readonly></textarea>
+                            </td>
+                            <td>
+                                {{ ship.good_size.toFixed(4) }}
+                            </td>
+                            <td>
+                                <input type="text" id="deliveryFee" style="width:100px;" ng-model="ship.delivery_fee" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>備註</th>
+                            <td colspan="7">
+                                <textarea class="form-control" id="commentText" rows="2" ng-model="ship.comment"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <th>
+                            <td>
+                                <button type="submit" id="submit_btn" class="btn btn-primary btn-lg" ng-model="wangjias" ng-click="validateNcal(wangjias)">單據送出</button>
+                            </td>
+                        </th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>
+                            <td>總材積：
+                                <input type="button" class="btn btn-lg btn-light form-control"  
+                                value="{{intOrderSize | number:2 }}" ng-model="intOrderSize" readonly/>
+                            </td>
+                            <td>總運費：
+                                <input type="button" class="btn btn-lg btn-light form-control"
+                                value="{{intOrderPrice | number:0 }}" ng-model="intOrderPrice" readonly/>
+                            </td>
+                        </th>
+                        
+                    </tfoot>
+                </table>
+                <br>
+            </form>
+        </div>
+    </div>
 </body>
+
 </html>

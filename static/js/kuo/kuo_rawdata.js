@@ -196,3 +196,41 @@ var rawdata = [
         {id: 159, city: '台東縣市', district: '海端鄉', car_type: '3.5t', fare: '6500'},
         {id: 160, city: '台東縣市', district: '海端鄉', car_type: '6.8t', fare: '9750'}
     ];
+
+//送達時間
+var arriveAfter = [
+        { hour:0,time:'不指定'},
+        { hour:8,time:'08:00'},
+        { hour:9,time:'09:00'},
+        { hour:10,time:'10:00'},
+        { hour:11,time:'11:00'},
+        { hour:12,time:'12:00'},
+        { hour:13,time:'13:00'},
+        { hour:14,time:'14:00'},
+        { hour:15,time:'15:00'},
+        { hour:16,time:'16:00'},
+        { hour:17,time:'17:00'},
+        { hour:18,time:'18:00'},
+        { hour:19,time:'19:00'},
+        { hour:20,time:'20:00'},
+        { hour:21,time:'21:00'},
+        { hour:22,time:'22:00'}
+    ];
+var arriveBefore = [
+        { hour:0,time:'不指定'},
+        { hour:8,time:'08:00'},
+        { hour:9,time:'09:00'},
+        { hour:10,time:'10:00'},
+        { hour:11,time:'11:00'},
+        { hour:12,time:'12:00'},
+        { hour:13,time:'13:00'},
+        { hour:14,time:'14:00'},
+        { hour:15,time:'15:00'},
+        { hour:16,time:'16:00'},
+        { hour:17,time:'17:00'},
+        { hour:18,time:'18:00'},
+        { hour:19,time:'19:00'},
+        { hour:20,time:'20:00'},
+        { hour:21,time:'21:00'},
+        { hour:22,time:'22:00'}
+    ];

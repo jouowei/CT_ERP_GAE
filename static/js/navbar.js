@@ -16,8 +16,8 @@
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">\
 						<a class="dropdown-item" href="kuo.html">郭元益</a>\
 						<a class="dropdown-item" href="lianhua.html">聯華</a>\
+						<a class="dropdown-item disabled" href="wangjia.html">旺家</a>\
 						<div class="dropdown-divider"></div>\
-						<a class="dropdown-item disabled" href="#">旺家</a>\
 						<a class="dropdown-item disabled" href="#">立信</a>\
 						<a class="dropdown-item disabled" href="#">信可</a>\
 						<a class="dropdown-item disabled" href="#">森永</a>\
