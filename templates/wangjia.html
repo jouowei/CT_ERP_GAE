@@ -103,18 +103,21 @@
                             <td>
                                 <button type="submit" id="submit_btn" class="btn btn-primary btn-lg" ng-model="wangjias" ng-click="validateNcal(wangjias)">單據送出</button>
                             </td>
-                        </th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th>
                             <td>總材積：
                                 <input type="button" class="btn btn-lg btn-light form-control"  
                                 value="{{intOrderSize | number:2 }}" ng-model="intOrderSize" readonly/>
                             </td>
-                            <td>總運費：
+                            <td>今日柴油：
+                                <div ng-init="getDieselDiscount()">
+                                    <input type="button" class="btn btn-lg btn-light form-control" value="{{dieselPriceToday}}" style="margin:2px;" readonly/>
+                                </div>
+                            </td>
+                            <td>運費調整：
+                                <input type="button" class="btn btn-lg btn-light form-control" value="{{discountRate}}" style="margin:2px;" style="width: 125px;" readonly/>
+                            </td>
+                            <td>調整後運費：<br>
                                 <input type="button" class="btn btn-lg btn-light form-control"
-                                value="{{intOrderPrice | number:0 }}" ng-model="intOrderPrice" readonly/>
+                                value="{{after_intOrderPrice | number:0 }}" ng-model="after_intOrderPrice"  style="width: 125px;" readonly/>
                             </td>
                         </th>
                         

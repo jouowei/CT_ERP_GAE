@@ -6,6 +6,8 @@ from main import db, app
 from flask import request, jsonify, render_template
 from datetime import datetime
 from flask_migrate import init, migrate, upgrade, Migrate
+import json
+import urllib2
 
 delivery_schema = DeliverySchema()
 deliveries_schema = DeliverySchema(many=True)
@@ -64,6 +66,7 @@ def add_order(rawdata):
     business_type = checkKey(rawdata,'business_type')
     delivery_date = checkKey(rawdata,'delivery_date')
     delivery_fee = checkKey(rawdata,'delivery_fee')
+    delivery_fee_before_discount = checkKey(rawdata,'delivery_fee_before_discount')
     car_type = checkKey(rawdata,'car_type')
     car_ID = checkKey(rawdata,'car_ID')
     good_size = checkKey(rawdata,'good_size')
@@ -95,7 +98,7 @@ def add_order(rawdata):
     result_delivery = Delivery.query.with_for_update().filter_by(order_ID=order_ID).first()
     # 資料庫沒有此Order => 新增Order
     if result_delivery is None:
-        new_delivery = Delivery(business_type,order_ID,clientname,delivery_date,delivery_fee,good_size,comment)
+        new_delivery = Delivery(business_type,order_ID,clientname,delivery_date,delivery_fee,delivery_fee_before_discount,good_size,comment)
         try:
             db.session.add(new_delivery)
             db.session.commit()
@@ -136,32 +139,6 @@ def acceptPOST():
             return add_order(rawdata)
     else:
         return 'Error: no data in the POST request'
-
-# endpoint to create new delivery entry
-@app.route("/delivery", methods=["POST"])
-def add_delivery():
-    result_delivery = Delivery.query.with_for_update().filter_by(order_ID=request.json['order_ID']).first()
-    if result_delivery is None:
-        new_delivery = Delivery(
-            request.json['businesstype'], 
-            request.json['order_ID'],
-            request.json['clientname'], 
-            request.json['delivery_date'],
-            request.json['delivery_fee'],
-            request.json['good_size'],
-            request.json['comment']
-            )
-        try:
-            db.session.add(new_delivery)
-            db.session.commit()
-        except:
-            db.session.rollback()
-            raise
-        finally:
-            db.session.close()
-            return '{}'.format(new_delivery)
-    else:
-        return 'this order is already exist'
 
 # endpoint to show all delivery entries
 @app.route("/delivery", methods=["GET"])
@@ -362,6 +339,15 @@ def shippment_update(id):
 
     db.session.commit()
     return shippment_schema.jsonify(shippment)
+
+# endpoint to show all delivery entries
+@app.route("/diselprice", methods=["GET"])
+def get_diselprice():
+    url = 'https://quality.data.gov.tw/dq_download_json.php?nid=6339&md5_url=a03335ba6b0bead4ec405a69605db65c'
+    open = urllib2.urlopen(url)
+    response = open.read().decode('utf-8')
+    data = json.loads(response)
+    return data[4][u'參考牌價'] #柴油價格
 
 # endpoint to delete delivery entry by order id
 @app.route("/shippment/<id>", methods=["DELETE"])

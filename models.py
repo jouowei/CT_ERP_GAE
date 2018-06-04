@@ -19,6 +19,7 @@ class Delivery(db.Model):
     clientname = db.Column(db.String(225), nullable=True)
     delivery_date =  db.Column(db.Date, nullable=True)
     delivery_fee =  db.Column(db.String(225), nullable=True)
+    delivery_fee_before_discount = db.Column(db.String(225), nullable=True)
     good_size =  db.Column(db.String(225), nullable=True)
     # a unique id number for future use
     order_ID = db.Column(db.String(15), unique=True, nullable=True)
@@ -26,19 +27,20 @@ class Delivery(db.Model):
     comment = db.Column(db.Text, nullable=True)
     
 
-    def __init__(self, businesstype, order_ID, clientname="", delivery_date="", delivery_fee="",good_size="", comment=""):
+    def __init__(self, businesstype, order_ID, clientname="", delivery_date="", delivery_fee="", delivery_fee_before_discount="",good_size="", comment=""):
         self.businesstype = businesstype
         self.clientname = clientname
         self.order_ID = order_ID
         self.delivery_date = delivery_date
         self.delivery_fee = delivery_fee
+        self.delivery_fee_before_discount = delivery_fee_before_discount
         self.good_size = good_size
         self.comment = comment
 
 class DeliverySchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('timestamp', 'updated_at', 'businesstype', 'clientname', 'order_ID', 'delivery_date','delivery_fee','good_size', 'comment')
+        fields = ('timestamp', 'updated_at', 'businesstype', 'clientname', 'order_ID', 'delivery_date','delivery_fee','delivery_fee_before_discount','good_size', 'comment')
 
 class Shippment(db.Model):
     """

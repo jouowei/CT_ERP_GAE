@@ -20,7 +20,8 @@ var wangjia = function(){
 };
 
 var intOrderSize = 0; //總訂單材積
-var intOrderPrice = 0; //總訂單運費
+var after_intOrderPrice = 0; //總訂單運費
+var before_intOrderPrice = 0; //總訂單運費
 
 //出貨單schema
 var order = function(){ 
@@ -31,7 +32,8 @@ var order = function(){
     this.ships = '';                   //送貨單 (見下方ships)
     this.delivery_fee = '';            //運費
     this.good_size = '';               //材積 (CBM) (新增)
-    this.good_pirce = '';               //貨物價格 (新增)
+    this.good_pirce = '';              //貨物價格 (新增)
+    this.delivery_fee_before_discount = ''; //油價調整前價格 (新增)
     this.comment = '';                 //出貨單備註
 };
 //送貨單schema
@@ -65,6 +67,16 @@ var wangjia_clienttype = [
     { id:10, keyword: "戒治所",type: "prison" },
     { id:11, keyword: "監獄",type: "prison" }
     //統倉與CVS定義
+];
+
+//油價浮動公式
+var wangjia_dieselDiscount = [
+    {maxDieselPrice: 18, discount: "error"},
+    {maxDieselPrice: 23, discount: "0.97"},
+    {maxDieselPrice: 25, discount: "0.99"},
+    {maxDieselPrice: 31, discount: "1.00"},
+    {maxDieselPrice: 33, discount: "1.01"},
+    {maxDieselPrice: 37, discount: "1.03"}
 ];
 
 //旺家用(運費表)

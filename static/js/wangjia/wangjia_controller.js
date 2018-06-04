@@ -18,30 +18,30 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 	$scope.showTabPicker = false;
 	$scope.showTable = false;
 	$scope.workbook;
-	$scope.getDieselPrice = function(){
-		/*
-		var getOilPriceInJson_API = "https://quality.data.gov.tw/dq_download_json.php?nid=6339&md5_url=a03335ba6b0bead4ec405a69605db65c";
+	$scope.discountRate = "";
+	$scope.dieselPriceToday = "";
+	$scope.getDieselDiscount = function(){
+		var getOilPriceInJson_API = "http://localhost/diselprice";
 		$http({
-			method: 'JSONP',
+			method: 'GET',
 			url: getOilPriceInJson_API
 		})
 		.then(function (response) {
-				if (response.status === 200) {
-					console.log(response.data);
-				} else {
-					throw '油價資料來源出錯 \n' + response.data;
-				}
-			},
-			function errorCallback(response) {
-				return console.log('油價資料伺服器錯誤 \n' + response);
-			});*/
-			url = "https://quality.data.gov.tw/dq_download_json.php?nid=6339&md5_url=7c72dc7fd1ae4d467a7b67f028624820"
-			$http.jsonp(url).then(function (response) {
-					console.log(response);
-				},
-				function errorCallback(response) {
-					console.log(response);
-				});
+			if (response.status === 200) {
+				$scope.dieselPriceToday = parseInt(response.data);
+				for (i = 0; i < wangjia_dieselDiscount.length; i++) {
+					if (wangjia_dieselDiscount[i].maxDieselPrice > parseInt(response.data)) {
+							$scope.discountRate = wangjia_dieselDiscount[i].discount;
+							return;
+					    }
+					}
+			} else {
+				throw '油價資料來源出錯 \n' + response.data;
+			}
+		},
+		function errorCallback(response) {
+			alert('油價伺服器錯誤 \n' + response.data);
+		});
 	}
 
 	$scope.getSheetName = function(){
@@ -86,7 +86,8 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 		$scope.wangjias = myService.cleanData(dataParsed);
 		$scope.showTable = true;
 		$scope.intOrderSize = intOrderSize;
-		$scope.intOrderPrice = intOrderPrice;
+		$scope.before_intOrderPrice = intOrderPrice;
+		$scope.after_intOrderPrice = $scope.before_intOrderPrice * parseFloat($scope.discountRate);
 	};
 
 
@@ -109,7 +110,8 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 				orderPrice += rawdata[i].delivery_fee;
 			}
 			$scope.intOrderSize = intOrderSize;
-			$scope.intOrderPrice = intOrderPrice;
+			$scope.before_intOrderPrice = intOrderPrice;
+			$scope.after_intOrderPrice = $scope.before_intOrderPrice * parseFloat($scope.discountRate);
 		}
 
 		//資料整理
@@ -123,7 +125,8 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 			submitOrder.delivery_date = x.pickupdate;
 			submitOrder.clientname = x.clientname;
 			submitOrder.good_size = x.good_size;
-			submitOrder.delivery_fee = x.delivery_fee;
+			submitOrder.delivery_fee = x.after_intOrderPrice;
+			submitOrder.delivery_fee_before_discount = x.before_intOrderPrice;
 			submitOrder.comment = x.comment;
 				var submitShip = new ship();
 				submitShip.ship_driver = x.driver;
