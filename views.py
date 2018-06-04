@@ -52,8 +52,9 @@ def checkKey(data,key):
         return ''
     else: 
         return data[key]
+
 # submit data into DB
-def add_order_new(rawdata):
+def add_order(rawdata):
     arrShippment = []
     if len(checkKey(rawdata,'order_ID')) > 0:
         order_ID = checkKey(rawdata,'order_ID')
@@ -125,89 +126,16 @@ def acceptPOST():
         if len(checkKey(rawdata,'order_ID')) == 0:
             result = ""
             for data in rawdata:
-                result = add_order_new(data)
+                result = add_order(data)
                 if len(result) > 0 and result != '新增成功':
                     return result
                 else:
                     continue
             return result
         else:
-            return add_order_new(rawdata)
+            return add_order(rawdata)
     else:
         return 'Error: no data in the POST request'
-
-# new endpoint to parse post with Json array
-@app.route("/order_old", methods=["POST"])
-def add_order():
-    if request.json:
-        arrShippment = []
-        rawdata = request.get_json(force=True)
-        if len(checkKey(rawdata,'order_ID')) > 0:
-            order_ID = checkKey(rawdata,'order_ID')
-        else:
-            return 'Error: unfound key "order_ID"'
-        clientname = checkKey(rawdata,'clientname')
-        businesstype = checkKey(rawdata,'business_type')
-        delivery_date = checkKey(rawdata,'delivery_date')
-        delivery_fee = checkKey(rawdata,'delivery_fee')
-        car_type = checkKey(rawdata,'car_type')
-        car_ID = checkKey(rawdata,'car_ID')
-        good_size = checkKey(rawdata,'good_size')
-        comment = checkKey(rawdata,'comment')
-        ships = checkKey(rawdata,'ships')
-        # 建立Shippments
-        for ship in ships:
-            if len(checkKey(ship,'ship_ID')) > 0 :
-                ship_ID = checkKey(ship,'ship_ID')
-            else:
-                return 'Error: unfound key "ship_ID"'
-            if len(checkKey(ship,'ship_driver')) > 0 :
-                driver = checkKey(ship,'ship_driver')
-            else:
-                return 'Error: unfound key "driver"'
-            contact_info = checkKey(ship,'contact_info')
-            ship_orderStore = checkKey(ship,'ship_orderStore')
-            ship_datetime = checkKey(ship,'ship_datetime')
-            ship_area = checkKey(ship,'ship_area')
-            ship_district = checkKey(ship,'ship_district')
-            is_elevator = checkKey(ship,'is_elevator')
-            floors_byhand = checkKey(ship,'floors_byhand')
-            amount_collect = checkKey(ship,'amount_collect')
-            ship_comment = checkKey(ship,'comment')
-            result_ship = Shippment.query.with_for_update().filter_by(ship_ID=ship_ID,driver=driver).first()
-            # 取消檢查ship_ID是否重複，但是以下廠商在傳入時，須確保ship_ID是唯一的:
-            #   1.郭元益
-            if result_ship is None: 
-                arrShippment.append(Shippment(ship_ID,order_ID,contact_info,ship_orderStore,ship_datetime,ship_area,ship_district,driver,car_type,car_ID,is_elevator,floors_byhand,amount_collect,ship_comment))
-
-        # 查詢此Order是否已存在
-        result_delivery = Delivery.query.with_for_update().filter_by(order_ID=order_ID).first()
-        # 資料庫沒有此Order => 新增Order
-        if result_delivery is None:
-            new_delivery = Delivery(businesstype,order_ID,clientname,delivery_date,delivery_fee,good_size,comment)
-            try:
-                db.session.add(new_delivery)
-                db.session.commit()
-            except:
-                db.session.rollback()
-                raise
-            # 如果Ships超過一筆，逐筆加入
-            if len(arrShippment) > 0:
-                for oneShip in arrShippment:
-                    try:
-                        db.session.add(oneShip)
-                        db.session.commit()
-                    except:
-                        db.session.rollback()
-                        raise
-            else:
-                return 'Error: no shippment or shippment duplicated'
-            return '新增成功'
-        else: 
-            return 'Notice: This order already exists'
-    else:
-        return 'Error: no data in the POST request'
-        # return jsonify(rawdata)
 
 # endpoint to create new delivery entry
 @app.route("/delivery", methods=["POST"])

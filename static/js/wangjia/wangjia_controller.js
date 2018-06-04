@@ -18,6 +18,32 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 	$scope.showTabPicker = false;
 	$scope.showTable = false;
 	$scope.workbook;
+	$scope.getDieselPrice = function(){
+		/*
+		var getOilPriceInJson_API = "https://quality.data.gov.tw/dq_download_json.php?nid=6339&md5_url=a03335ba6b0bead4ec405a69605db65c";
+		$http({
+			method: 'JSONP',
+			url: getOilPriceInJson_API
+		})
+		.then(function (response) {
+				if (response.status === 200) {
+					console.log(response.data);
+				} else {
+					throw '油價資料來源出錯 \n' + response.data;
+				}
+			},
+			function errorCallback(response) {
+				return console.log('油價資料伺服器錯誤 \n' + response);
+			});*/
+			url = "https://quality.data.gov.tw/dq_download_json.php?nid=6339&md5_url=7c72dc7fd1ae4d467a7b67f028624820"
+			$http.jsonp(url).then(function (response) {
+					console.log(response);
+				},
+				function errorCallback(response) {
+					console.log(response);
+				});
+	}
+
 	$scope.getSheetName = function(){
 		dataParsed = new Array();
 		var files = $('#files')[0].files;
@@ -124,12 +150,8 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 			*/
 			var SUBMIT_ORDER_API = "http://localhost/order";
 			try{
-				$http({
-					url: SUBMIT_ORDER_API,                         
-					method: "POST",
-					data: JSON.stringify(arrFinalData),
-					headers:{'Content-Type': 'application/json','Access-Control-Allow-Origin': '*' }
-				})
+				$http
+				.post(SUBMIT_ORDER_API,JSON.stringify(arrFinalData))
 				.then(function(response) {
 					if (response.status === 200) {
 						alert(response.data);
