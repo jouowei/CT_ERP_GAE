@@ -49,13 +49,13 @@ var ship = function(){
 };
 
 //旺家用(飲料關鍵字)
-var wangjiaDrinkKeyword = [
+const wangjiaDrinkKeyword = [
     "吸吸冰", "形動", "梅酒", "每日完勝", "吸C凍", "旺仔牛奶",
     "果粒多", "深層水", "水飲", "飲料", "果汁"];
 
 //旺家用(客戶類型)  
 ///還需確認定義
-var wangjia_clienttype = [
+const wangjia_clienttype = [
     { id:1, keyword: "全台",type: "warehouse" },
     { id:2, keyword: "捷盟",type: "warehouse" },
     { id:3, keyword: "萊爾富",type: "warehouse" },
@@ -71,7 +71,7 @@ var wangjia_clienttype = [
 ];
 
 //油價浮動公式
-var wangjia_dieselDiscount = [
+const wangjia_dieselDiscount = [
     {maxDieselPrice: 18, discount: "error"},
     {maxDieselPrice: 23, discount: "0.97"},
     {maxDieselPrice: 25, discount: "0.99"},
@@ -85,7 +85,7 @@ var wangjia_dieselDiscount = [
 unitprice = 每材積價格 (乾貨為體積才，飲品為重量才)
 unit = 單位 (乾貨為CBM，飲品為每10KG一才)
 */
-var wangjia_shipfee = [
+const wangjia_shipfee = [
     { shipto: "台南市", type: "warehouse", cargo: "dry", unit:"CBM", unitprice: 7.5, minimumPirce: 300, minimumUnit: 33}, 
     { shipto: "台南市", type: "warehouse", cargo: "liquid", unit:"10kg", unitprice: 8, minimumPirce: 300, minimumUnit: 33},
     { shipto: "台南市", type: "prison", cargo: "dry", unit:"CBM", unitprice: 7.5, minimumPirce: 500, minimumUnit: 55}, 
@@ -117,7 +117,7 @@ volumePerUnit = 體積才(箱)(同"單品項才數")
 shipPrice = 運費(箱)
 reverseShipPrice = 逆物流運費(箱)*/
 ///有新產品更新都需要提供
-var wangjia_beverage_lookup = [
+const wangjia_beverage_lookup = [
     { id: "308103000322", name: "旺旺果粒多葡萄汁24袋", weightPerUnit: 0.989, volumePerUnit: 0.717, shipPrice: 7.91, reverseShipPrice: 5.54 },
     { id: "308103000323", name: "旺旺果粒多水蜜桃汁24袋", weightPerUnit: 0.989, volumePerUnit: 0.717, shipPrice: 7.91, reverseShipPrice: 5.54 },
     { id: "308103000324", name: "旺旺果粒多柳橙汁24袋", weightPerUnit: 0.989, volumePerUnit: 0.717, shipPrice: 7.91, reverseShipPrice: 5.54 },
@@ -167,4 +167,4 @@ var wangjia_beverage_lookup = [
     { id: "308105000350", name: "雪姬梅酒禮盒", weightPerUnit: 1.300, volumePerUnit: 1.011, shipPrice: 10.40, reverseShipPrice: 7.28 }
     ];
 
-var columnKeys = ["銷售單/調撥單號", "交貨單號", "交貨日期", "交貨單建立日期", "收貨人名稱", "收貨地址", "物料", "單品項才數", "交貨數量", "金額(未稅)"];
+const columnKeys = ["銷售單/調撥單號", "交貨單號", "交貨日期", "交貨單建立日期", "收貨人名稱", "收貨地址", "物料", "單品項才數", "交貨數量", "金額(未稅)"];

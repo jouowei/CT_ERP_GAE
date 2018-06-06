@@ -176,3 +176,32 @@ function calTotalPrice(unit, clientType, cargo, area) {
         return Math.round(arrX[i].unitprice * unit);
     }
 }
+
+//油價計算公式
+function getDieselDiscount ($http,API) {
+    var getOilPriceInJson_API = "http://localhost/diselprice";
+    var result = { price: "", rate: ""};
+    $http({
+            method: 'GET',
+            url: API
+        })
+        .then(function (response) {
+                if (response.status === 200) {
+                    let dieselPriceToday = parseInt(response.data);
+                    for (i = 0; i < wangjia_dieselDiscount.length; i++) {
+                        if (wangjia_dieselDiscount[i].maxDieselPrice >= parseInt(response.data)) {
+                            let discountRate = wangjia_dieselDiscount[i].discount;
+                            result.rate = discountRate;
+                            result.price = dieselPriceToday;
+                            break;
+                        }
+                    }
+                } else {
+                    throw '油價資料來源出錯 \n' + response.data;
+                }
+            },
+            function errorCallback(response) {
+                alert('油價伺服器錯誤 \n' + response.data);
+            });
+    return result;
+}

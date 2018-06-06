@@ -64,6 +64,7 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 			var submitOrder;
 			var submitShips = [];
 			submitOrder = new order();
+			submitOrder.updateduser = userID;
 			submitOrder.order_ID = x.order_ID;
 			submitOrder.delivery_date = x.pickupdate;
 			submitOrder.clientname = x.contact_info;

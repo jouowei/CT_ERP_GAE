@@ -30,14 +30,14 @@ var ships = [{
     }];
 
 //郭元益(發單門市)
-var order_store = ['中正','鳳山','岡山','屏東','總公司',
+const order_store = ['中正', '鳳山', '岡山', '屏東', '總公司',
     '士林','中山','忠孝','新光A4','三重','板橋','永和',
     '基隆','宜蘭','桃園','中壢','新竹',
     '三民','大甲','彰化','員林','嘉義','成功','東寧','新營','二階'
         ];
         
 //郭元益用(運費表)
-var rawdata = [
+const rawdata = [
         {id: 1, city: '高雄市', district: '前金區', car_type: '3.5t', fare: '480'},
         {id: 2, city: '高雄市', district: '前金區', car_type: '6.8t', fare: '900'},
         {id: 3, city: '高雄市', district: '前鎮區', car_type: '3.5t', fare: '500'},
@@ -199,7 +199,7 @@ var rawdata = [
     ];
 
 //送達時間
-var arriveAfter = [
+const arriveAfter = [
         { hour:0,time:'不指定'},
         { hour:8,time:'08:00'},
         { hour:9,time:'09:00'},
@@ -217,7 +217,7 @@ var arriveAfter = [
         { hour:21,time:'21:00'},
         { hour:22,time:'22:00'}
     ];
-var arriveBefore = [
+const arriveBefore = [
         { hour:0,time:'不指定'},
         { hour:8,time:'08:00'},
         { hour:9,time:'09:00'},

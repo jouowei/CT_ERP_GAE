@@ -16,7 +16,7 @@ var lianhua = function(){
 };
 
 //讀取csv的欄位名稱
-var key = ["預計揀貨日", "承諾交貨日", "送貨地址", "車次", "單據類型", "單據號碼", "說明", "縣市", "鄉鎮市區", "出貨材積(立方米)"];
+const key = ["預計揀貨日", "承諾交貨日", "送貨地址", "車次", "單據類型", "單據號碼", "說明", "縣市", "鄉鎮市區", "出貨材積(立方米)"];
 
 //出貨單schema
 var order = function(){ 
@@ -41,7 +41,7 @@ var ship = function(){
 };
  
 //聯華用(客戶類型)
-var lianhua_clienttype = [
+const lianhua_clienttype = [
     { id:1, keyword: "全台物流",type: "warehouse" },
     { id:2, keyword: "捷盟行銷",type: "warehouse" },
     { id:3, keyword: "萊爾富國際",type: "warehouse" },
@@ -53,7 +53,7 @@ var lianhua_clienttype = [
     ];
 
 //聯華用(運費表)
-var lianhua_shipfee = [
+const lianhua_shipfee = [
     { shipto: "台南市", type: "warehouse", maxCBM: 1, unitprice: 744.76}, 
     { shipto: "台南市", type: "factory", maxCBM: 1, unitprice: 744.76},
     { shipto: "台南市", type: "other", maxCBM: 1, unitprice: 763.81},

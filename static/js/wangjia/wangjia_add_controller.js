@@ -1,12 +1,15 @@
-var myApp = angular.module('wangjia_form',[]);
+var myApp = angular.module('wangjia',[]);
 
 //MVC的M
 myApp.service('myService', function() {
-	this.cleanData = function (dataParsed) {
+	this.cleanData = function(dataParsed) {
 		return orderBuilder(dataParsed);
 	}
 	this.buildConfig = function(){
 		return configBuilder();
+	}
+	this.getDieselDiscount = function ($http,API) {
+		return getDieselDiscount($http, API);
 	}
 });
 
@@ -19,33 +22,11 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 	$scope.showTable = false;
 	$scope.showSubmitBtn= false;
 	$scope.workbook;
-	$scope.discountRate = "";
 	$scope.dieselPriceToday = "";
-	$scope.getDieselDiscount = function(){
-		var getOilPriceInJson_API = "http://localhost/diselprice";
-		$http({
-			method: 'GET',
-			url: getOilPriceInJson_API
-		})
-		.then(function (response) {
-			if (response.status === 200) {
-				$scope.dieselPriceToday = parseInt(response.data);
-				for (i = 0; i < wangjia_dieselDiscount.length; i++) {
-					if (wangjia_dieselDiscount[i].maxDieselPrice >= parseInt(response.data)) {
-							$scope.discountRate = wangjia_dieselDiscount[i].discount;
-							return;
-					    }
-					}
-			} else {
-				throw '油價資料來源出錯 \n' + response.data;
-			}
-		},
-		function errorCallback(response) {
-			alert('油價伺服器錯誤 \n' + response.data);
-		});
-	}
+	$scope.oilInfo = myService.getDieselDiscount($http, "http://localhost/diselprice");
 
 	$scope.getSheetName = function(){
+		$scope.showSubmitBtn = false;
 		dataParsed = new Array();
 		var files = $('#files')[0].files;
 		if (files.length > 0){
@@ -75,7 +56,9 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 			};
 		};
 	};
-	$scope.parseFiles = function (sheetName) { //指定sheetname
+
+	//傳入sheetname後將資料帶出
+	$scope.parseFiles = function (sheetName) { 
 		var headerNames = XLSX.utils.sheet_to_json($scope.workbook.Sheets[sheetName], {
 			header: 1
 		})[1];
@@ -88,11 +71,10 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 		$scope.showTable = true;
 		$scope.intOrderSize = intOrderSize;
 		$scope.before_intOrderPrice = intOrderPrice;
-		$scope.after_intOrderPrice = $scope.before_intOrderPrice * parseFloat($scope.discountRate);
+		$scope.after_intOrderPrice = $scope.before_intOrderPrice * parseFloat($scope.oilInfo.rate);
 	};
 
-
-	//驗證
+	//資料驗證
     $scope.validateNcal = function(rawdata){
 		var orderSize = 0;
 		var orderPrice = 0;
@@ -116,34 +98,35 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 			}
 			$scope.intOrderSize = intOrderSize;
 			$scope.before_intOrderPrice = intOrderPrice;
-			$scope.after_intOrderPrice = $scope.before_intOrderPrice * parseFloat($scope.discountRate);
+			$scope.after_intOrderPrice = parseInt($scope.before_intOrderPrice * parseFloat($scope.oilInfo.rate));
 		}
 		if ($scope.showSubmitBtn){
-			//重新計算運費
-			//1.重新計算所有order的運費
+			//重新計算所有order的運費
 			const typed_discountRate = $('#diesel_discount').val();
-			//1.1 先檢查各車次(order)的運費是否正確
+			//1 先檢查各車次(order)的運費是否正確
 			let typed_deliveryFee = 0; 
 			for(i = 0; i < rawdata.length; i++){
 				typed_deliveryFee += parseFloat(rawdata[i].delivery_fee);
 			}
-			//1.2 算出所有order的運費總額
+			//2 算出所有order的運費總額
 			const typed_after_fee = parseInt(parseFloat(typed_discountRate) * parseInt(typed_deliveryFee));
-			
 			if (typed_after_fee != $scope.after_intOrderPrice) {
-				let confirmAns = confirm("請確認是否更改油價係數： \n 調整前：" + $scope.after_intOrderPrice 
+				let confirmAns = confirm("請確認是否更改運費： \n 調整前：" + $scope.after_intOrderPrice 
 					+"\n 調整後：" + typed_after_fee);
 				if (confirmAns){
 					$scope.after_intOrderPrice = typed_after_fee;
-					$scope.discountRate = typed_discountRate;
+					$scope.oilInfo.rate = typed_discountRate;
 					$scope.showSubmitBtn = true;
+					return;
 				} else {
-					$('#diesel_discount').val($scope.discountRate);
+					$('#diesel_discount').val($scope.oilInfo.rate);
 					$('#total_delivery_fee').val($scope.after_intOrderPrice);
 					$scope.showSubmitBtn = false;
+					return;
 				}
 			} else {
 				$scope.showSubmitBtn = true;
+				return;
 			}
 		};
 	}; 
@@ -157,12 +140,13 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 			var submitOrder;
 			var submitShips = [];
 			submitOrder = new order();
+			submitOrder.updateduser = userID;
 			submitOrder.order_ID = x.order_ID;
 			submitOrder.delivery_date = x.pickupdate;
 			submitOrder.clientname = x.clientname;
 			submitOrder.good_size = x.good_size;
-			submitOrder.delivery_fee = x.after_intOrderPrice;
-			submitOrder.delivery_fee_before_discount = x.before_intOrderPrice;
+			submitOrder.delivery_fee = $scope.after_intOrderPrice;
+			submitOrder.delivery_fee_before_discount = $scope.before_intOrderPrice;
 			submitOrder.comment = x.comment;
 			var submitShip = new ship();
 			submitShip.ship_driver = x.driver;
@@ -175,37 +159,36 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 			submitOrder.ships = submitShips;
 			arrFinalData.push(submitOrder);
 		});
+		if (showSubmitBtn){
+			//POST request
+			$("input[type=button]").attr("disabled", "disabled");
+			$("input[type=text]").attr("disabled", "disabled");
+			$("input[type=select]").attr("disabled", "disabled");
 
-		//POST request
-		$("input[type=button]").attr("disabled", "disabled");
-		$("input[type=text]").attr("disabled", "disabled");
-		$("input[type=select]").attr("disabled", "disabled");
-
-		/*
-		var SUBMIT_ORDER_API = "https://jt-erp.appspot.com/order";
-		var SUBMIT_ORDER_API = "https://ct-erp.appspot.com/order";
-		*/
-		var SUBMIT_ORDER_API = "http://localhost/order";
-		try {
-			$http
-				.post(SUBMIT_ORDER_API, JSON.stringify(arrFinalData))
-				.then(function (response) {
-						if (response.status === 200) {
-							alert(response.data);
-							if (response.data === "新增成功") {
-								setTimeout(function () {
-									location.reload();
-								}, 500);
+			//var SUBMIT_ORDER_API = "https://jt-erp.appspot.com/order";
+			//var SUBMIT_ORDER_API = "https://ct-erp.appspot.com/order";
+			var SUBMIT_ORDER_API = "http://localhost/order";
+			try {
+				$http
+					.post(SUBMIT_ORDER_API, JSON.stringify(arrFinalData))
+					.then(function (response) {
+							if (response.status === 200) {
+								alert(response.data);
+								if (response.data === "新增成功") {
+									setTimeout(function () {
+										location.reload();
+									}, 500);
+								}
+							} else {
+								throw '系統出現問題，請通知工程師處理 "level:1" \n' + response.data;
 							}
-						} else {
-							throw '系統出現問題，請通知工程師處理 "level:1" \n' + response.data;
-						}
-					},
-					function errorCallback(response) {
-						return alert('系統出現問題，請通知工程師處理 \n' + response.data);
-					});
-		} catch (err) {
-			return alert(err);
-		}
+						},
+						function errorCallback(response) {
+							return alert('系統出現問題，請通知工程師處理 \n' + response.data);
+						});
+			} catch (err) {
+				return alert(err);
+			}
+		};
 	};
 });
