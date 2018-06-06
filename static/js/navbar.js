@@ -1,5 +1,6 @@
 	navbar = 
-	'<nav class="navbar navbar-expand-lg navbar-dark bg-dark">\
+	'\
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">\
 		<a class="navbar-brand" href="index.html"><img src="icon.png"  width="32px" height="32px" />駿騰物流填單系統</a>\
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">\
 			  <span class="navbar-toggler-icon"></span>\
@@ -46,8 +47,12 @@
 						<a class="dropdown-item" href="#">聯華</a>\
 						<a class="dropdown-item" href="#">旺家</a>\
 					</li>\
-				</ul>\
+				< /ul>\
 			</div>\
 	</nav>';
-    document.write(navbar);
+	document.write(navbar);
+	//檢查登入狀態，沒有登入就退回index.html
+	if (getCookie("ID").length == 0) {
+		window.location = "/";
+	}
     

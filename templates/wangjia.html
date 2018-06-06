@@ -4,19 +4,18 @@
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/js/gijgo.min.js" type="text/javascript"></script>
-    <link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-        crossorigin="anonymous">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.10/angular.min.js"></script>
+    <title>駿騰物流配送填單系統</title>
+    
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.10/angular.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/js/gijgo.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="js/jslib/sha256.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>市面物流配送填單系統</title>
+
     <script type="text/javascript" src="js/rawdata.js"></script>
     <script type="text/javascript" src="js/navbar.js"></script>
 	<script type="text/javascript" src="js/jslib/moment.min.js"></script>
@@ -49,7 +48,7 @@
         </div>
             <br>
         <div ng-show="showTable">
-            <form id="order_form" ng-submit="submitForm()">
+            <form id="order_form" ng-submit="submitForm(wangjias)">
                 <table id="ship_table" class="table order-list table-responsive-sm">
                     <thead class="thead-light">
                         <tr>
@@ -101,23 +100,25 @@
                     <tfoot>
                         <th>
                             <td>
-                                <button type="submit" id="submit_btn" class="btn btn-primary btn-lg" ng-model="wangjias" ng-click="validateNcal(wangjias)">單據送出</button>
+                                <button type="submit" id="submit_btn" class="btn btn-primary btn-lg" ng-show="showSubmitBtn" ng-model="wangjias" ng-click="validateNcal(wangjias)">單據送出</button>
                             </td>
+							<td style="text-align: right;">
+								<input type="button" class="btn btn-lg btn-info form-control"  id="cal_fee" value="運費試算" ng-model="order" ng-click="validateNcal(wangjias)" />
+							</td>
                             <td>總材積：
                                 <input type="button" class="btn btn-lg btn-light form-control"  
                                 value="{{intOrderSize | number:2 }}" ng-model="intOrderSize" readonly/>
                             </td>
-                            <td>今日柴油：
+                            <td>本周柴油：
                                 <div ng-init="getDieselDiscount()">
                                     <input type="button" class="btn btn-lg btn-light form-control" value="{{dieselPriceToday}}" style="margin:2px;" readonly/>
                                 </div>
                             </td>
                             <td>運費調整：
-                                <input type="button" class="btn btn-lg btn-light form-control" value="{{discountRate}}" style="margin:2px;" style="width: 125px;" readonly/>
+                                <input type="text" id="diesel_discount" value="{{discountRate}}" style="margin:2px; width: 125px;"/>
                             </td>
                             <td>調整後運費：<br>
-                                <input type="button" class="btn btn-lg btn-light form-control"
-                                value="{{after_intOrderPrice | number:0 }}" ng-model="after_intOrderPrice"  style="width: 125px;" readonly/>
+                                <input type="button" id="total_delivery_fee" class="btn btn-lg btn-light form-control" value="{{after_intOrderPrice | number:0 }}"  style="margin:2px; width: 125px;" readonly/>
                             </td>
                         </th>
                         

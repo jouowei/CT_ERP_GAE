@@ -21,7 +21,7 @@ var wangjia = function(){
 
 var intOrderSize = 0; //總訂單材積
 var after_intOrderPrice = 0; //總訂單運費
-var before_intOrderPrice = 0; //總訂單運費
+var intOrderPrice = 0; //總訂單運費
 
 //出貨單schema
 var order = function(){ 
@@ -31,6 +31,7 @@ var order = function(){
     this.order_ID = '';                //出貨單號
     this.ships = '';                   //送貨單 (見下方ships)
     this.delivery_fee = '';            //運費
+    this.before_intOrderPrice = '';    //油價調整前運費
     this.good_size = '';               //材積 (CBM) (新增)
     this.good_pirce = '';              //貨物價格 (新增)
     this.delivery_fee_before_discount = ''; //油價調整前價格 (新增)
