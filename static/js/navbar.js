@@ -52,7 +52,8 @@
 	</nav>';
 	document.write(navbar);
 	//檢查登入狀態，沒有登入就退回index.html
-	if (getCookie("ID").length == 0) {
+	const userID = getCookie("ID");
+	if (userID.length == 0) {
 		window.location = "/";
 	}
     

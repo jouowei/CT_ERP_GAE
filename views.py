@@ -72,6 +72,7 @@ def add_order(rawdata):
     good_size = checkKey(rawdata,'good_size')
     comment = checkKey(rawdata,'comment')
     ships = checkKey(rawdata,'ships')
+    updateduser = checkKey(rawdata, 'updateduser')
     # 建立Shippments
     for ship in ships:
         if len(checkKey(ship,'ship_ID')) > 0 :
@@ -98,7 +99,8 @@ def add_order(rawdata):
     result_delivery = Delivery.query.with_for_update().filter_by(order_ID=order_ID).first()
     # 資料庫沒有此Order => 新增Order
     if result_delivery is None:
-        new_delivery = Delivery(business_type,order_ID,clientname,delivery_date,delivery_fee,delivery_fee_before_discount,good_size,comment)
+        new_delivery = Delivery(business_type, order_ID, clientname, delivery_date,
+                                delivery_fee, delivery_fee_before_discount, good_size, comment, updateduser)
         try:
             db.session.add(new_delivery)
             db.session.commit()

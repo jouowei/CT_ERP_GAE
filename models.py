@@ -25,9 +25,9 @@ class Delivery(db.Model):
     order_ID = db.Column(db.String(15), unique=True, nullable=True)
     ship_ID = db.relationship('Shippment', backref='Delivery',lazy='dynamic')
     comment = db.Column(db.Text, nullable=True)
+    updateduser = db.Column(db.String(225), nullable=True) 
     
-
-    def __init__(self, businesstype, order_ID, clientname="", delivery_date="", delivery_fee="", delivery_fee_before_discount="",good_size="", comment=""):
+    def __init__(self, businesstype, order_ID, clientname="", delivery_date="", delivery_fee="", delivery_fee_before_discount="", good_size="", comment="", updateduser=""):
         self.businesstype = businesstype
         self.clientname = clientname
         self.order_ID = order_ID
@@ -36,11 +36,13 @@ class Delivery(db.Model):
         self.delivery_fee_before_discount = delivery_fee_before_discount
         self.good_size = good_size
         self.comment = comment
+        self.updateduser = updateduser
 
 class DeliverySchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('timestamp', 'updated_at', 'businesstype', 'clientname', 'order_ID', 'delivery_date','delivery_fee','delivery_fee_before_discount','good_size', 'comment')
+        fields = ('timestamp', 'updated_at', 'businesstype', 'clientname', 'order_ID', 'delivery_date',
+                  'delivery_fee', 'delivery_fee_before_discount', 'good_size', 'comment', 'updateduser')
 
 class Shippment(db.Model):
     """

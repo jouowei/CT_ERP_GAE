@@ -223,14 +223,15 @@ myApp.controller('formCtrl', function($scope,$http) {
         $("input[type=button]").attr("disabled", "disabled");
         $("input[type=text]").attr("disabled", "disabled");
         $("input[type=select]").attr("disabled", "disabled");
-        
-        var SUBMIT_ORDER_API = "https://jt-erp.appspot.com/order";
+
+        var SUBMIT_ORDER_API = "http://localhost/order";
         /*
         var SUBMIT_ORDER_API = "https://ct-erp.appspot.com/order";
-        var SUBMIT_ORDER_API = "http://localhost/order";
+        var SUBMIT_ORDER_API = "https://jt-erp.appspot.com/order";
         */
         var submitOrder;
         submitOrder = order;
+        submitOrder.updateduser = userID;
         submitOrder.delivery_date = $('#datepicker').val();
         submitOrder.comment = $('#commentText').val();
         submitOrder.delivery_fee = $('#fee_result').val();

@@ -8,7 +8,8 @@ var order = {
         car_ID:'',              //車號
         ships:'',               //送貨單 (見下方ships)
         delivery_fee:'',        //運費
-        comment:''              //出貨單備註
+        comment:'',             //出貨單備註
+        updateduser: ''         //使用者
 };
 //送貨單schema
 var ships = [{
