@@ -123,7 +123,7 @@ myApp.controller('formCtrl', function($scope,$http) {
         }
     };
     //驗證資料 & 計算價格
-    $scope.validateNcal = function(order,doSubmit){
+    $scope.validateNcal = function(order){
         var errormsg = "";
         var basic_fee = new Array();
         var floor =  0;

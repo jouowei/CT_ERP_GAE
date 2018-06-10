@@ -6,7 +6,8 @@ var wangjia = function(){
     this.pickupdate = "";           //送單日期 (目前無用)
     this.clientname = "";           //收貨人名稱
     this.client_type = "";          //客戶類型 (計算運費用)
-    this.delivery_fee = "";         //運費
+    this.delivery_fee_before_discount = ""; //調整前運費
+    this.delivery_fee = "";         //調整後運費 (油價或手動輸入)
     this.contact_info = "";         //收貨地址
     this.ship_area = "";            //縣市
     this.ship_district = "";        //區域
@@ -14,27 +15,25 @@ var wangjia = function(){
     this.itemID = "";               //物料(飲料計算運費用)
     this.itemName = "";             //物料品名(飲料計算運費用)
     this.good_size = 0;			    //材積(CBM)
-    this.good_pirce = 0;            //金額(未稅)
+    this.good_pirce = 0;            //貨物總金額(未稅)
     this.shipUnits = 0;             //交貨數
     this.comment = "";              //備註
 };
 
-var intOrderSize = 0; //總訂單材積
-var after_intOrderPrice = 0; //總訂單運費
-var intOrderPrice = 0; //總訂單運費
+var orderSize = 0; //整張表的總材積數
+var orderPrice = 0; //整張表的運費
 
 //出貨單schema
 var order = function(){ 
     this.business_type = '旺家';       //出貨單類型
-    this.delivery_date = '';           //揀貨日期 (上游取貨) (新增)
+    this.delivery_date = '';           //揀貨日期 (上游取貨)
     this.client_name = '';             //客戶名稱
     this.order_ID = '';                //出貨單號
     this.ships = '';                   //送貨單 (見下方ships)
     this.delivery_fee = '';            //運費
-    this.before_intOrderPrice = '';    //油價調整前運費
-    this.good_size = '';               //材積 (CBM) (新增)
-    this.good_pirce = '';              //貨物價格 (新增)
-    this.delivery_fee_before_discount = ''; //油價調整前價格 (新增)
+    this.good_size = '';               //材積 (CBM)
+    this.good_pirce = '';              //貨物價格 
+    this.delivery_fee_before_discount = ''; //油價調整前運費
     this.comment = '';                 //出貨單備註
 };
 //送貨單schema
@@ -167,4 +166,6 @@ const wangjia_beverage_lookup = [
     { id: "308105000350", name: "雪姬梅酒禮盒", weightPerUnit: 1.300, volumePerUnit: 1.011, shipPrice: 10.40, reverseShipPrice: 7.28 }
     ];
 
-const columnKeys = ["銷售單/調撥單號", "交貨單號", "交貨日期", "交貨單建立日期", "收貨人名稱", "收貨地址", "物料", "單品項才數", "交貨數量", "金額(未稅)"];
+const columnKeys = [
+    "銷售單/調撥單號", "交貨單號", "交貨日期", "交貨單建立日期", "收貨人名稱", "收貨地址",
+    "物料", "單品項才數", "交貨數量", "金額(未稅)"];

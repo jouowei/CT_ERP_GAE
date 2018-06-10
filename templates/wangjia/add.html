@@ -14,28 +14,35 @@
 	<link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <script type="text/javascript" src="js/rawdata.js"></script>
-    <script type="text/javascript" src="js/navbar.js"></script>
-	<script type="text/javascript" src="js/jslib/moment.min.js"></script>
-    <script type="text/javascript" src="js/jslib/xlsx.full.min.js"></script>
-    <script type="text/javascript" src="js/wangjia/wangjia_add_controller.js"></script>
-    <script type="text/javascript" src="js/wangjia/wangjia_rawdata.js"></script>
-    <script type="text/javascript" src="js/wangjia/wangjia_ext.js"></script>
+    <script type="text/javascript" src="/js/rawdata.js"></script>
+    <script type="text/javascript" src="/js/navbar.js"></script>
+	<script type="text/javascript" src="/js/jslib/moment.min.js"></script>
+    <script type="text/javascript" src="/js/jslib/xlsx.full.min.js"></script>
+    <script type="text/javascript" src="/js/wangjia/wangjia_service.js"></script>
+    <script type="text/javascript" src="/js/wangjia/wangjia_controller_add.js"></script>
+    <script type="text/javascript" src="/js/wangjia/wangjia_rawdata.js"></script>
+    <script type="text/javascript" src="/js/wangjia/wangjia_ext.js"></script>
 </head>
 
-<body>
+<body ng-app="wangjia">
     <!-- 下方填單頁 -->
     <div class="jumbotron text-center">
-        <h1>旺家填單介面</h1>
+        <h1>市面物流-旺家</h1>
         <p>注意：不會處理高雄台南屏東以外地區的送貨單</p>
         
+        <div class="text-center" style="margin-top: 30px">
+            <button id="btnAddPage" type="button" class="btn btn-lg btn-primary" onclick="javascript:location.href='add.html'">新增紀錄</button> 
+            <button id="btnQueryPage" type="button" class="btn btn-lg btn-light" onclick="javascript:location.href='query.html'">查詢紀錄</button> 
+            <button id="btnReportPage" type="button" class="btn btn-lg btn-light" onclick="javascript:location.href='report.html'">瀏覽報表</button>
+        </div>
     </div>
-    <div class="container" ng-app="wangjia" ng-controller="formCtrl">
+    <div class="container" ng-controller="formCtrl">
         <div id="file_uploader" >
-            <input type="file" class="btn btn-info " id="files">
+            請上傳旺家格式的送貨明細Excel<br>
+            <input type="file" class="btn btn-info " id="files" accept=".xlsx">
             <input type="button" class="btn btn-lg btn-info " id="cal_fee" value="上傳" ng-model="rawdata" ng-click="getSheetName()" />
         </div>
-        <div id="tab_picker" ng-show="showTabPicker">
+        <div id="tab_picker" ng-show="show.TabPicker">
             <br> 請選擇一個要處理的分頁
             <br>
             <div style="border:3px dashed #138496;">
@@ -47,8 +54,8 @@
             </div>
         </div>
         <br>
-        <div ng-show="showTable">
-            <form id="order_form" ng-submit="submitForm(wangjias)">
+        <div ng-show="show.DataTable">
+            <form id="order_form" ng-submit="submitForm()">
                 <table id="ship_table" class="table order-list table-responsive-sm">
                     <thead class="thead-light">
                         <tr>
@@ -87,7 +94,7 @@
                                 {{ ship.good_size.toFixed(4) }}
                             </td>
                             <td>
-                                <input type="text" id="deliveryFee" style="width:100px;" ng-model="ship.delivery_fee" required>
+                                {{ ship.delivery_fee.toFixed(2)  }}
                             </td>
                         </tr>
                         <tr>
@@ -100,28 +107,27 @@
                     <tfoot>
                         <th>
                             <td>
-                                <button type="submit" id="submit_btn" class="btn btn-primary btn-lg" ng-show="showSubmitBtn" ng-model="wangjias" ng-click="validateNcal(wangjias)">單據送出</button>
+                                <button type="submit" id="submit_btn" class="btn btn-primary btn-lg" ng-show="show.SubmitBtn" ng-model="wangjias" ng-click="validateNcal(wangjias)">單據送出</button>
                             </td>
-							<td style="text-align: right;">
-								<input type="button" class="btn btn-lg btn-info form-control"  id="cal_fee" value="運費試算" ng-model="order" ng-click="validateNcal(wangjias)" />
-							</td>
                             <td>總材積：
                                 <input type="button" class="btn btn-lg btn-light form-control"  
-                                value="{{intOrderSize | number:2 }}" ng-model="intOrderSize" readonly/>
+                                value="{{orderSize | number:2 }}" ng-model="orderSize" readonly/>
                             </td>
                             <td>本周柴油：
                                 <div>
                                     <input type="button" class="btn btn-lg btn-light form-control" value="{{oilInfo.price}}" style="margin:2px;" readonly/>
                                 </div>
                             </td>
-                            <td>運費調整：
-                                <input type="text" id="diesel_discount" value="{{oilInfo.rate}}" style="margin:2px; width: 125px;"/>
+                            <td>運費調整：<br>
+                                <input type="text" id="diesel_discount" value="{{oilInfo.rate}}" ng-model="oilInfo.rate" style="font-size: x-large; margin:2px; width: 125px;"/>
                             </td>
                             <td>調整後運費：<br>
-                                <input type="button" id="total_delivery_fee" class="btn btn-lg btn-light form-control" value="{{after_intOrderPrice | number:0 }}"  style="margin:2px; width: 125px;" readonly/>
+                                <input type="button" id="total_delivery_fee" class="btn btn-lg btn-light form-control" value="{{orderPrice}}"  style="margin:2px; width: 125px;" readonly/>
                             </td>
+							<td style="text-align: right;">
+								<input type="button" class="btn btn-lg btn-info form-control"  id="cal_fee" value="運費試算" ng-model="order" ng-click="validateNcal(wangjias)" />
+							</td>
                         </th>
-                        
                     </tfoot>
                 </table>
                 <br>

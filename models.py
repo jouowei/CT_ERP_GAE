@@ -58,7 +58,7 @@ class Shippment(db.Model):
     contact_info = db.Column(db.String(255), nullable=True)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
     ship_orderStore = db.Column(db.String(255), nullable=True)
-    ship_datetime = db.Column(db.String(225), nullable=True)
+    ship_datetime = db.Column(db.String(50), nullable=True)
     ship_area = db.Column(db.String(255), nullable=True)
     ship_district = db.Column(db.String(255), nullable=True)
     driver = db.Column(db.String(255), nullable=True)

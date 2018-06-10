@@ -1,3 +1,5 @@
+//所有旺家service裡面的程式都會放在這裡
+
 //Excel資料處理
 function orderBuilder(rawContent){
     var dirtys = new Array();
@@ -64,8 +66,6 @@ function orderBuilder(rawContent){
     //把多筆整合成一筆
     var cleans = new Array();
     var singleOrder = 0;
-    intOrderSize = 0;
-    intOrderPrice = 0;
 
     dirtys.forEach(function(dirtydata){
         var single_order = new wangjia();
@@ -143,8 +143,6 @@ function orderBuilder(rawContent){
             //計算運費
             //比對looluptable，不到最低價以最低價計 (此功能未確定前先不加入)
             cleandata.delivery_fee = order_price;
-            intOrderSize += cleandata.good_size;
-            intOrderPrice += cleandata.delivery_fee;
             cleans.push(cleandata);
         } else {
             for (i = 0; i < cleans.length; i++) {
@@ -178,30 +176,76 @@ function calTotalPrice(unit, clientType, cargo, area) {
 }
 
 //油價計算公式
-function getDieselDiscount ($http,API) {
-    var getOilPriceInJson_API = "http://localhost/diselprice";
-    var result = { price: "", rate: ""};
+function getDieselDiscount ($http,API = "") {
+    var result = { 
+        price: "",      //油價
+        initRate: "",   //油價係數 (未調整)
+        rate: ""        //油價係數 (調整後)
+    };
     $http({
             method: 'GET',
             url: API
         })
         .then(function (response) {
-                if (response.status === 200) {
-                    let dieselPriceToday = parseInt(response.data);
-                    for (i = 0; i < wangjia_dieselDiscount.length; i++) {
-                        if (wangjia_dieselDiscount[i].maxDieselPrice >= parseInt(response.data)) {
-                            let discountRate = wangjia_dieselDiscount[i].discount;
-                            result.rate = discountRate;
-                            result.price = dieselPriceToday;
-                            break;
-                        }
+            if (response.status === 200) {
+                let dieselPriceToday = parseInt(response.data);
+                for (i = 0; i < wangjia_dieselDiscount.length; i++) {
+                    if (wangjia_dieselDiscount[i].maxDieselPrice >= parseInt(response.data)) {
+                        let discountRate = wangjia_dieselDiscount[i].discount;
+                        result.rate = discountRate;
+                        result.initRate = discountRate;
+                        result.price = dieselPriceToday;
+                        break;
                     }
+                }
+            } else {
+                throw '油價資料來源出錯 \n' + response.data;
+            }
+        },
+        function errorCallback(response) {
+            alert('油價伺服器錯誤 \n' + response.data);
+        });
+    return result;
+}
+
+function getDataFromDB($http, API = "", callback) {
+    $http({
+            method: 'GET',
+            url: API
+        })
+        .then(function successCallback(response) {
+                if (response.status === 200) {
+                    callback(response.data);
                 } else {
-                    throw '油價資料來源出錯 \n' + response.data;
+                    alert('資料來源出錯! \n' + response.data);
                 }
             },
             function errorCallback(response) {
-                alert('油價伺服器錯誤 \n' + response.data);
+                alert('伺服器錯誤! \n' + response.data);
             });
-    return result;
+}
+
+//把order轉為wangjia格式
+function convert_DbData2Wangjia(order = new order(), ships = new ships()){
+    var objWangjia = new wangjia();
+    var arrWangjia = new Array();
+
+    for (j = 0; j < ships.length; j++) {
+        if (order.order_ID.length > 0) {
+            const objOrderKeys = Object.keys(order);
+            for (i = 0; i < objOrderKeys.length; i++) {
+                if (typeof objWangjia[objOrderKeys[i]] !== "undefined") {
+                    objWangjia[objOrderKeys[i]] = order[objOrderKeys[i]];
+                }
+            }
+        }
+        const objShipKeys = Object.keys(ships[j]);
+        for (i = 0; i < objShipKeys.length; i++) {
+            if (typeof objWangjia[objShipKeys[i]] !== "undefined") {
+                objWangjia[objShipKeys[i]] = ships[j][objShipKeys[i]];
+            }
+        }
+        arrWangjia.push(objWangjia);
+    }
+    return arrWangjia;
 }

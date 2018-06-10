@@ -122,6 +122,33 @@ def add_order(rawdata):
     else: 
         return 'Notice: This order already exists'
 
+# 用orderID取order內容
+@app.route("/delivery/<id>", methods=["GET"])
+def delivery_detail(id):
+    #把對應的delivery order拉出來
+    delivery = Delivery.query.filter_by(order_ID=id).first()
+    return delivery_schema.jsonify(delivery)
+
+# endpoint to get shippment entry detail by ship id
+@app.route("/shippment/<id>", methods=["GET"])
+def shippment_detail(id):
+    shippment = Shippment.query.filter_by(ship_ID=id).all()
+    if len(shippment) == 0:
+        shippment = Shippment.query.filter_by(order_ID=id).all()
+    result = shippments_schema.dump(shippment)
+    return jsonify(result.data)
+
+# 查油價API
+@app.route("/diselprice", methods=["GET"])
+def get_diselprice():
+    url = 'https://quality.data.gov.tw/dq_download_json.php?nid=6339&md5_url=a03335ba6b0bead4ec405a69605db65c'
+    open = urllib2.urlopen(url)
+    response = open.read().decode('utf-8')
+    data = json.loads(response)
+    return data[4][u'參考牌價'] #柴油價格
+
+################################################################
+
 # new endpoint to parse post with Json array
 @app.route("/order", methods=["POST"])
 def acceptPOST():
@@ -161,11 +188,7 @@ def get_delivery():
     result = deliveries_schema.dump(all_delivery)
     return jsonify(result.data)
 
-# endpoint to get delivery entry detail by order id
-@app.route("/delivery/<id>", methods=["GET"])
-def delivery_detail(id):
-    delivery = Delivery.query.filter_by(order_ID=id).first()
-    return delivery_schema.jsonify(delivery)
+
 
 # endpoint to update delivery entry by order id for businesstype, clientname, and comment
 @app.route("/delivery/<id>", methods=["PUT", "POST"])
@@ -250,17 +273,10 @@ def get_shippment():
     result = shippments_schema.dump(all_shippments)
     return jsonify(result.data)
 
-# endpoint to get shippment entry detail by ship id
-@app.route("/shippment/<id>", methods=["GET"])
-def shippment_detail(id):
-    shippment = Shippment.query.filter_by(ship_ID=id).first()
-    return shippment_schema.jsonify(shippment)
-
 # endpoint to update shippment entry by order id
 @app.route("/shippment/<id>", methods=["PUT", "POST"])
 def shippment_update(id):
     shippment = Shippment.query.filter_by(order_ID=id).first()
-
     try:
         contact_info = request.json['contact_info']
         shippment.contact_info = contact_info
@@ -342,14 +358,6 @@ def shippment_update(id):
     db.session.commit()
     return shippment_schema.jsonify(shippment)
 
-# endpoint to show all delivery entries
-@app.route("/diselprice", methods=["GET"])
-def get_diselprice():
-    url = 'https://quality.data.gov.tw/dq_download_json.php?nid=6339&md5_url=a03335ba6b0bead4ec405a69605db65c'
-    open = urllib2.urlopen(url)
-    response = open.read().decode('utf-8')
-    data = json.loads(response)
-    return data[4][u'參考牌價'] #柴油價格
 
 # endpoint to delete delivery entry by order id
 @app.route("/shippment/<id>", methods=["DELETE"])
