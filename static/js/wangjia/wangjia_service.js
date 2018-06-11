@@ -15,14 +15,16 @@ myApp.service('myService', function() {
 	this.getDataFromDB = function ($http, API, callback) {
 		return getDataFromDB($http, API, callback);
 	}
-	this.convertOrder2Wangjia = function (order,ships) {
+	this.convertOrder2Wangjia = function (order = new order(),ships = new ships()) {
 		return convert_DbData2Wangjia(order, ships);
 	}
 });
 
 myApp.factory("myFactory", function () {
   	var commonData = new Array();
+  	var DataTable = false;
   	return {
-  		data: commonData
+		data: commonData,
+		show: DataTable
   	};
 });

@@ -208,41 +208,29 @@ function getDieselDiscount ($http,API = "") {
     return result;
 }
 
-function getDataFromDB($http, API = "", callback) {
-    $http({
-            method: 'GET',
-            url: API
-        })
-        .then(function successCallback(response) {
-                if (response.status === 200) {
-                    callback(response.data);
-                } else {
-                    alert('資料來源出錯! \n' + response.data);
-                }
-            },
-            function errorCallback(response) {
-                alert('伺服器錯誤! \n' + response.data);
-            });
-}
-
 //把order轉為wangjia格式
 function convert_DbData2Wangjia(order = new order(), ships = new ships()){
-    var objWangjia = new wangjia();
-    var arrWangjia = new Array();
-
+    let objWangjia = new wangjia();
+    let arrWangjia = new Array();
+    let specialKey = ["order_ID","ship_ID","delivery_fee","good_size","comment"]
     for (j = 0; j < ships.length; j++) {
         if (order.order_ID.length > 0) {
             const objOrderKeys = Object.keys(order);
             for (i = 0; i < objOrderKeys.length; i++) {
                 if (typeof objWangjia[objOrderKeys[i]] !== "undefined") {
+                    if (findObjInArray(specialKey, objOrderKeys[i]).length > 0){
+                        objWangjia.initOrder[objOrderKeys[i]] = order[objOrderKeys[i]];
+                    }
                     objWangjia[objOrderKeys[i]] = order[objOrderKeys[i]];
                 }
             }
         }
         const objShipKeys = Object.keys(ships[j]);
-        for (i = 0; i < objShipKeys.length; i++) {
-            if (typeof objWangjia[objShipKeys[i]] !== "undefined") {
-                objWangjia[objShipKeys[i]] = ships[j][objShipKeys[i]];
+        for (k = 0; k < objShipKeys.length; k++) {
+            if (typeof objWangjia[objShipKeys[k]] !== "undefined") {
+                if (ships[j][objShipKeys[k]].length > 0) {
+                    objWangjia[objShipKeys[k]] = ships[j][objShipKeys[k]];
+                }
             }
         }
         arrWangjia.push(objWangjia);

@@ -64,64 +64,66 @@
             </div>
         </form>
     </div>
-<div class="container" ng-controller="resultForm" style="padding: 20px;">
-            <form id="form" ng-submit="submit()" >
-                <table class="table order-list table-responsive-sm">
-                    <thead class="thead-light">
-                        <tr>
-                            <th rowspan="2">#</th>
-                            <th>送貨車次</th>
-                            <th>司機姓名</th>
-                            <th>送貨地點</th>
-                            <th>材積數</th>
-                            <th>運費</th>
-                        </tr>
-                    </thead>
-                    <tbody ng-repeat="ship in wangjias.data">
-                        <tr>
-                            <th valign="center" rowspan="0">{{$index+1}}</th>
-                            <td>
-                                {{ ship.order_ID }}
-                            </td>
-                            <td>
-                                {{ship.driver}}
-                            </td>
-                            <td>
-                                {{ship.clientname}}
-                                <br> {{ship.contact_info}}
-                                <br>
-                            </td>
-                            <td>
-                                {{ ship.good_size}}
-                            </td>
-                            <td>
-                                <input type="text" value="{{ship.delivery_fee }}" 
-                                ng-model="ship.delivery_fee" 
-                                style="font-size: large; margin:2px; width: 125px;"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>備註</th>
-                            <td colspan="7">
-                                <textarea class="form-control" id="commentText" rows="2" ng-model="ship.comment"></textarea>
-                            </td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <th>
-                            <td>
-                                <button type="submit" id="submit_btn" class="btn btn-primary btn-lg" ng-show="show.SubmitBtn" ng-model="wangjias" ng-click="validateNcal(wangjias)">單據送出</button>
-                            </td>
-                            <td style="text-align: right;">
-                                <input type="button" class="btn btn-lg btn-info form-control" value="運費試算" ng-model="order" ng-click="validateNcal(wangjias)"
-                                />
-                            </td>
-                        </th>
-                    </tfoot>
-                </table>
-                <br>
-            </form>
-        </div>
+    <div class="container" ng-controller="resultForm" style="padding: 20px;">
+        <form id="form" ng-show="wangjias.show">
+            <table class="table order-list table-responsive-sm">
+                <thead class="thead-light">
+                    <tr>
+                        <th rowspan="2">#</th>
+                        <th>送貨車次</th>
+                        <th>司機姓名</th>
+                        <th>送貨地點</th>
+                        <th>材積數</th>
+                        <th>運費</th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="ship in wangjias.data">
+                    <tr>
+                        <th valign="center" rowspan="0">{{$index+1}}</th>
+                        <td>
+                            {{ ship.order_ID }}
+                        </td>
+                        <td>
+                            {{ship.driver}}
+                        </td>
+                        <td>
+                            {{ship.clientname}}
+                            <br> {{ship.contact_info}}
+                            <br>
+                        </td>
+                        <td>
+                            <input type="text" value="{{ship.good_size}}" ng-model="ship.good_size" style="font-size: large; margin:2px; width: 125px;"
+                            />
+                        </td>
+                        <td>
+                            <input type="text" value="{{ship.delivery_fee }}" ng-model="ship.delivery_fee" style="font-size: large; margin:2px; width: 125px;"
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>備註</th>
+                        <td colspan="7">
+                            <textarea class="form-control" id="commentText" rows="2" value="{{ship.comment}}" ng-model="ship.comment"></textarea>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td style="text-align: right;">
+                            <input type="button" class="btn btn-lg btn-info form-control" value="運費試算" ng-click="validateNcal(wangjias.data)" />
+                        </td>
+                        <td>
+                            <button type="submit" id="submit_btn" class="btn btn-primary btn-lg" ng-show="show.SubmitBtn" ng-click="submitForm()">單據送出</button>
+                        </td>
+                    </th>
+                </tfoot>
+            </table>
+            <br>
+        </form>
+    </div>
 </body>
 
 </html>

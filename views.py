@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from models import Delivery, DeliverySchema, Shippment, ShippmentSchema
+from models import Delivery, DeliverySchema, Shippment, ShippmentSchema, OperateLog, OperateLogSchema
 from main import db, app
 from flask import request, jsonify, render_template
 from datetime import datetime
@@ -14,6 +14,9 @@ deliveries_schema = DeliverySchema(many=True)
 
 shippment_schema = ShippmentSchema()
 shippments_schema = ShippmentSchema(many=True)
+
+log_schema = OperateLogSchema()
+logs_schema = OperateLogSchema(many=True)
 
 # Main landing page
 @app.route("/")
@@ -129,7 +132,7 @@ def delivery_detail(id):
     delivery = Delivery.query.filter_by(order_ID=id).first()
     return delivery_schema.jsonify(delivery)
 
-# endpoint to get shippment entry detail by ship id
+# 用orderID或shipID取ship內容
 @app.route("/shippment/<id>", methods=["GET"])
 def shippment_detail(id):
     shippment = Shippment.query.filter_by(ship_ID=id).all()
@@ -147,6 +150,51 @@ def get_diselprice():
     data = json.loads(response)
     return data[4][u'參考牌價'] #柴油價格
 
+# 更新order
+# endpoint to update delivery entry by order id for businesstype, clientname, and comment
+@app.route("/delivery/<id>", methods=["PUT", "POST"])
+def delivery_update(id):
+    delivery = Delivery.query.filter_by(order_ID=id).first()
+    try:
+        businesstype = request.json['business_type']
+        delivery.businesstype = businesstype
+    except:
+        pass
+    try:
+        updateduser = request.json['updateduser']
+        delivery.updateduser = updateduser
+    except:
+        pass
+    try:
+        delivery_fee = request.json['delivery_fee']
+        delivery.delivery_fee = delivery_fee
+    except:
+        pass
+    try:
+        good_size = request.json['good_size']
+        delivery.good_size = good_size
+    except:
+        pass
+    try:
+        #comment = '\ new comment' + request.json['comment']
+        comment = request.json['comment']
+        delivery.comment += comment
+    except:
+        pass
+    delivery.updated_at = datetime.utcnow()
+    db.session.commit() 
+
+    #add log
+    businesstype1 = request.json['business_type']
+    new_log = OperateLog(businesstype1, "UPDATE", id, "", updateduser)
+    try:
+        db.session.add(new_log)
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+
+    return "資料更新成功"
 ################################################################
 
 # new endpoint to parse post with Json array
@@ -187,42 +235,6 @@ def get_delivery():
     # return jsonify(results)
     result = deliveries_schema.dump(all_delivery)
     return jsonify(result.data)
-
-
-
-# endpoint to update delivery entry by order id for businesstype, clientname, and comment
-@app.route("/delivery/<id>", methods=["PUT", "POST"])
-def delivery_update(id):
-    delivery = Delivery.query.filter_by(order_ID=id).first()
-    try:
-        businesstype = request.json['businesstype']
-        delivery.businesstype = businesstype
-    except:
-        pass
-    try:
-        clientname = request.json['clientname']
-        delivery.clientname = clientname    
-    except:
-        pass
-    try:
-        delivery_date = request.json['delivery_date']
-        delivery.delivery_date = delivery_date    
-    except:
-        pass
-    try:
-        delivery_fee = request.json['delivery_fee']
-        delivery.delivery_date = delivery_fee    
-    except:
-        pass
-    try:
-        comment = '\ new comment' + request.json['comment']
-        delivery.comment += comment
-    except:
-        pass
-    delivery.updated_at = datetime.utcnow()
-    
-    db.session.commit()
-    return delivery_schema.jsonify(delivery)
 
 # endpoint to delete delivery entry by order id
 @app.route("/delivery/<id>", methods=["DELETE"])

@@ -45,15 +45,6 @@ function navbar() {
 						<a class="dropdown-item disabled" href="#">Something else here</a>\
 						</div>\
 					</li>\
-					<li class="nav-item dropdown">\
-						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
-						報表\
-						</a>\
-						<div class="dropdown-menu" aria-labelledby="navbarDropdown">\
-						<a class="dropdown-item" href="#">郭元益</a>\
-						<a class="dropdown-item" href="#">聯華</a>\
-						<a class="dropdown-item" href="#">旺家</a>\
-					</li>\
 				< /ul>\
 			</div>\
 	</nav>';

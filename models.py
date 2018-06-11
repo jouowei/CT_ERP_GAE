@@ -90,3 +90,28 @@ class ShippmentSchema(ma.Schema):
     class Meta:
         # Fields to expose
         fields = ('ship_ID','order_ID', 'contact_info', 'updated_at','ship_orderStore','ship_datetime', 'ship_area', 'ship_district', 'driver', 'car_type', 'car_ID', 'is_elevator', 'floors_byhand', 'amount_collect', 'comment')
+
+class OperateLog(db.Model):
+    __tablename__ = 'operate_log'
+    
+    index = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+    businesstype = db.Column(db.String(255), nullable=True)
+    function = db.Column(db.String(255), nullable=True)
+    order_ID = db.Column(db.String(15), nullable=True)
+    ship_ID = db.Column(db.String(255), nullable=True)
+    user_ID = db.Column(db.String(225), nullable=True)
+
+    def __init__(self, businesstype, function, order_ID, ship_ID, user_ID):
+        self.businesstype = businesstype
+        self.function = function
+        self.order_ID = order_ID
+        self.ship_ID = ship_ID
+        self.user_ID = user_ID
+
+class OperateLogSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('timestamp', 'updated_at', 'businesstype','function'
+                  'order_ID', 'ship_ID', 'userID')

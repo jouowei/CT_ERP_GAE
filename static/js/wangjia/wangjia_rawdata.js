@@ -18,6 +18,14 @@ var wangjia = function(){
     this.good_pirce = 0;            //貨物總金額(未稅)
     this.shipUnits = 0;             //交貨數
     this.comment = "";              //備註
+    ////新增資料查詢用變數
+    this.initOrder = {
+        order_ID: "",
+        ship_ID: "",
+        delivery_fee: "",
+        good_size: "",
+        comment: ""
+    }
 };
 
 var orderSize = 0; //整張表的總材積數

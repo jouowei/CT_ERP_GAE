@@ -95,3 +95,28 @@ function signOut() {
     deleteCookie("ID", getCookie("ID"));
     deleteCookie("name", getCookie("name"));
 }
+
+function getDataFromDB($http, API = "", callback) {
+    $http({
+            method: 'GET',
+            url: API
+        })
+        .then(function successCallback(response) {
+                if (response.status === 200) {
+                    callback(response.data);
+                } else {
+                    alert('資料來源出錯! \n' + response.data);
+                }
+            },
+            function errorCallback(response) {
+                alert('伺服器錯誤! \n' + response.data);
+            });
+}
+
+//改變網頁上各欄位可用性
+function changeUIstatus(boolDisable = false){
+    $('textarea').prop('disabled', boolDisable);
+    $("input[type=button]").prop("disabled", boolDisable);
+    $("input[type=text]").prop("disabled", boolDisable);
+    $("input[type=select]").prop("disabled", boolDisable);
+}
