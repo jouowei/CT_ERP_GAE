@@ -52,11 +52,13 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 		$scope.wangjias = myService.cleanData(dataParsed);
 		//把初始運費先倒到 delivery_fee_before_discount
 		let orderPrice = 0;
+		let orderSize = 0;
 		for (i = 0; i < $scope.wangjias.length; i++) {
 			/*
 			delivery_fee_before_discount -> 最初的油價係數 * 最初算出來的運費
 			delivery_fee -> 手動修改油價係數，調整後的運費 (一開始兩者相同)
 			*/
+			$scope.oilInfo.rate = $scope.oilInfo.initRate;
 			let initFee = parseInt(parseInt($scope.wangjias[i].delivery_fee) * parseFloat($scope.oilInfo.initRate));
 			$scope.wangjias[i].delivery_fee_before_discount = initFee;
 			$scope.wangjias[i].delivery_fee = initFee;
@@ -73,21 +75,25 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
     $scope.validateNcal = function(rawdata){
 		let orderSize = 0;
 		let orderPrice = 0;
-		let currentOrderPrice = $scope.orderPrice; //目前運費總額
-		for (i = 0; i< rawdata.length; i++){
+		const currentOrderPrice = $scope.orderPrice; //目前運費總額
+		const currentOilRate = $scope.oilInfo.rate; //目前油價係數
+		for (let i = 0; i< rawdata.length; i++){
 			if (rawdata[i].driver.length == 0){
 				alert('送貨單號： ' + rawdata[i].order_ID + '的司機是空的');
 				$scope.oilInfo.rate = $scope.oilInfo.initRate;
+				$scope.orderPrice = currentOrderPrice;
 				$scope.show.SubmitBtn = false;
 				break;
 			} else if (rawdata[i].delivery_fee == 0) {
 				alert('送貨單號：' + rawdata[i].order_ID + '的運費不正確，請確認內容');
 				$scope.oilInfo.rate = $scope.oilInfo.initRate;
+				$scope.orderPrice = currentOrderPrice;
 				$scope.show.SubmitBtn = false;
 				break;
 			} else if (rawdata[i].good_size > rawdata[i].delivery_fee){
 				alert('送貨單號：' + rawdata[i].order_ID + '的運費低於材積數，請確認內容');
 				$scope.oilInfo.rate = $scope.oilInfo.initRate;
+				$scope.orderPrice = currentOrderPrice;
 				$scope.show.SubmitBtn = false;
 				break;
 			}
@@ -97,15 +103,16 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 			orderPrice += parseInt(rawdata[i].delivery_fee); 
 			$scope.show.SubmitBtn = true;
 		}
-		$scope.orderPrice = orderPrice;
-		if ($scope.show.SubmitBtn){
-			if ($scope.orderPrice != currentOrderPrice) {
+		if ($scope.show.SubmitBtn) {
+			if (orderPrice != currentOrderPrice) {
 				let confirmAns = confirm("請確認是否更改運費： \n 調整前：" + currentOrderPrice +
 					"\n 調整後：" + orderPrice);
 				if (confirmAns) {
+					$scope.orderPrice = orderPrice;
 					$scope.show.SubmitBtn = true;
 					return;
 				} else {
+					$scope.orderPrice = currentOrderPrice;
 					$scope.show.SubmitBtn = false;
 					return;
 				}
@@ -160,11 +167,9 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 					.then(function (response) {
 							if (response.status === 200) {
 								alert(response.data);
-								if (response.data === "新增成功") {
-									setTimeout(function () {
-										location.reload();
-									}, 500);
-								}
+								setTimeout(function () {
+									location.reload();
+								}, 500);
 							} else {
 								throw '系統出現問題，請通知工程師處理 "level:1" \n' + response.data;
 							}

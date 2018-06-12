@@ -119,11 +119,21 @@ def add_order(rawdata):
                 except:
                     db.session.rollback()
                     raise
+
+                #add log
+                new_log = OperateLog(business_type, "ADD", order_ID, ship_ID, updateduser)
+                try:
+                    db.session.add(new_log)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+                    raise
         else:
             return 'Error: no shippment or shippment duplicated'
+
         return '新增成功'
     else: 
-        return 'Notice: This order already exists'
+        return '訂單已經存在'
 
 # 用orderID取order內容
 @app.route("/delivery/<id>", methods=["GET"])
