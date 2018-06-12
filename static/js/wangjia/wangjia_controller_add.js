@@ -134,7 +134,7 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 			submitOrder = new order();
 			submitOrder.updateduser = userID;
 			submitOrder.order_ID = x.order_ID;
-			submitOrder.delivery_date = x.pickupdate;
+			submitOrder.delivery_date = x.shipdate;
 			submitOrder.clientname = x.clientname;
 			submitOrder.good_size = x.good_size;
 			submitOrder.delivery_fee = x.delivery_fee;
