@@ -77,30 +77,31 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 		let orderPrice = 0;
 		const currentOrderPrice = $scope.orderPrice; //目前運費總額
 		const currentOilRate = $scope.oilInfo.rate; //目前油價係數
-		for (let i = 0; i< rawdata.length; i++){
-			if (rawdata[i].driver.length == 0){
-				alert('送貨單號： ' + rawdata[i].order_ID + '的司機是空的');
+		for (let i = 0; i < rawdata.length; i++) {
+			const ship = rawdata[i];
+			if (ship.driver.length == 0) {
+				alert('送貨單號： ' + ship.order_ID + '的司機是空的');
 				$scope.oilInfo.rate = $scope.oilInfo.initRate;
 				$scope.orderPrice = currentOrderPrice;
 				$scope.show.SubmitBtn = false;
 				break;
-			} else if (rawdata[i].delivery_fee == 0) {
-				alert('送貨單號：' + rawdata[i].order_ID + '的運費不正確，請確認內容');
+			} else if (ship.delivery_fee == 0) {
+				alert('送貨單號：' + ship.order_ID + '的運費不正確，請確認內容');
 				$scope.oilInfo.rate = $scope.oilInfo.initRate;
 				$scope.orderPrice = currentOrderPrice;
 				$scope.show.SubmitBtn = false;
 				break;
-			} else if (rawdata[i].good_size > rawdata[i].delivery_fee){
-				alert('送貨單號：' + rawdata[i].order_ID + '的運費低於材積數，請確認內容');
+			} else if (ship.good_size > ship.delivery_fee) {
+				alert('送貨單號：' + ship.order_ID + '的運費低於材積數，請確認內容');
 				$scope.oilInfo.rate = $scope.oilInfo.initRate;
 				$scope.orderPrice = currentOrderPrice;
 				$scope.show.SubmitBtn = false;
 				break;
 			}
 			//重新計算運費(原始運費 / 原始油價係數 * 新油價係數)
-			rawdata[i].delivery_fee = parseInt(rawdata[i].delivery_fee_before_discount) / parseFloat($scope.oilInfo.initRate) * parseFloat($scope.oilInfo.rate);
+			ship.delivery_fee = parseInt(ship.delivery_fee_before_discount) / parseFloat($scope.oilInfo.initRate) * parseFloat($scope.oilInfo.rate);
 			//調整後的total運費
-			orderPrice += parseInt(rawdata[i].delivery_fee); 
+			orderPrice += parseInt(ship.delivery_fee); 
 			$scope.show.SubmitBtn = true;
 		}
 		if ($scope.show.SubmitBtn) {
