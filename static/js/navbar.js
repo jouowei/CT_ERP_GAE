@@ -40,12 +40,12 @@ function navbar() {
 						南北物流\
 						</a>\
 						<div class="dropdown-menu disabled" aria-labelledby="navbarDropdown">\
-						<a class="dropdown-item disabled" href="#">聯華</a>\
-						<div class="dropdown-divider"></div>\
-						<a class="dropdown-item disabled" href="#">Something else here</a>\
+							<a class="dropdown-item disabled" href="#">聯華</a>\
+							<div class="dropdown-divider"></div>\
+							<a class="dropdown-item disabled" href="#">Something else here</a>\
 						</div>\
 					</li>\
-				< /ul>\
+				</ul>\
 			</div>\
 	</nav>';
 }
