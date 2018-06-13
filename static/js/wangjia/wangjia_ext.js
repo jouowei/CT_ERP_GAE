@@ -72,7 +72,7 @@ function orderBuilder(rawContent){
         var cleandata = new wangjia();
         var order_CBM = 0;
         var order_price = 0;
-        var order_returnPrice = 0;
+        var order_returnPrice = 0; //退貨價格
         
         //多筆詳細資料 -> 以訂單為單位 -> 計算運費 & 材積數            
         //如果order_ID還沒處理過，開始計算運費
@@ -102,7 +102,7 @@ function orderBuilder(rawContent){
                 //確認是否是飲料，如果是就找出價格跟材積
                 if (findObjInArray(wangjiaDrinkKeyword, ship.itemName).length > 0) {
                     for (i = 0; i < wangjia_beverage_lookup.length; i++) {
-                        if (ship.itemID === wangjia_beverage_lookup[i].id) {
+                        if (ship.itemID.trim() === wangjia_beverage_lookup[i].id) {
                             ship.good_size = wangjia_beverage_lookup[i].weightPerUnit * ship.shipUnits;
                             order_CBM += ship.good_size;
                             order_price += calTotalPrice(ship.good_size, cleandata.client_type, "liquid", ship.ship_area);
