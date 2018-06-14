@@ -25,7 +25,8 @@ var ships = [{
     ship_district:'',   //區域
     is_elevator:'',     //是否有搭電梯 (+100)
     floors_byhand:'',   //手搬樓層數 (1樓+100)
-    amount_collect:'',  //代收貨款 (現金0.2%手續費，支票無)
+    paytype: '',        //代收款付款方式 (現金,支票)
+    amount_collect:'',  //代收款 (現金0.2%手續費，支票無)
     comment:''          //備註
     }];
 

@@ -89,14 +89,15 @@ def add_order(rawdata):
         ship_district = checkKey(ship,'ship_district')
         driver = checkKey(ship,'ship_driver')
         is_elevator = checkKey(ship,'is_elevator')
-        floors_byhand = checkKey(ship,'floors_byhand')
+        floors_byhand = checkKey(ship, 'floors_byhand')
+        paytype = checkKey(ship, 'paytype')
         amount_collect = checkKey(ship,'amount_collect')
         ship_comment = checkKey(ship,'comment')
         result_ship = Shippment.query.with_for_update().filter_by(ship_ID=ship_ID,driver=driver).first()
             # 取消檢查ship_ID是否重複，但是以下廠商在傳入時，須確保ship_ID是唯一的:
             #   1.郭元益
         if result_ship is None: 
-            arrShippment.append(Shippment(ship_ID,order_ID,contact_info,ship_orderStore,ship_datetime,ship_area,ship_district,driver,car_type,car_ID,is_elevator,floors_byhand,amount_collect,ship_comment))
+            arrShippment.append(Shippment(ship_ID,order_ID,contact_info,ship_orderStore,ship_datetime,ship_area,ship_district,driver,car_type,car_ID,is_elevator,floors_byhand,paytype,amount_collect,ship_comment))
         
     # 查詢此Order是否已存在
     result_delivery = Delivery.query.with_for_update().filter_by(order_ID=order_ID).first()
@@ -273,6 +274,7 @@ def add_shippment():
             request.json['car_ID'],
             request.json['is_elevator'],
             request.json['floors_byhand'],
+            request.json['paytype'],
             request.json['amount_collect'],
             request.json['ship_comment']
             )

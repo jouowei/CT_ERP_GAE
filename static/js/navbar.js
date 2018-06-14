@@ -22,7 +22,7 @@ function navbar() {
 							市面物流\
 						</a>\
 						<div class="dropdown-menu" aria-labelledby="navbarDropdown">\
-							<a class="dropdown-item" href="/kuo.html">郭元益</a>\
+							<a class="dropdown-item" href="/kuo/add.html">郭元益</a>\
 							<a class="dropdown-item" href="/lianhua.html">聯華</a>\
 							<a class="dropdown-item" href="/wangjia/add.html">旺家</a>\
 							<div class="dropdown-divider"></div>\

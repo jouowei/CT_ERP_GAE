@@ -109,13 +109,10 @@ myApp.controller('resultForm', function ($scope, $http, myService, myFactory) {
             submitOrder.comment = x.comment;
             arrFinalData.push(submitOrder);
         });
+        //POST request
         if ($scope.show.SubmitBtn) {
-            //POST request
             for (let i = 0; i < arrFinalData.length; i++) {
                 const order = arrFinalData[i];
-                //var SUBMIT_ORDER_API = "https://jt-erp.appspot.com/order";
-                //var SUBMIT_ORDER_API = "https://ct-erp.appspot.com/order";
-                //var SUBMIT_ORDER_API = "http://localhost/order";
                 var SUBMIT_ORDER_API = document.location.origin + "/delivery/" + order.order_ID;
 
                 try {

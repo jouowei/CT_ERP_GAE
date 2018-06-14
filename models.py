@@ -65,12 +65,12 @@ class Shippment(db.Model):
     car_type = db.Column(db.String(255), nullable=True)
     car_ID = db.Column(db.String(255), nullable=True)
     is_elevator = db.Column(db.String(255), nullable=True)
+    paytype = db.Column(db.String(255), nullable=True)
     floors_byhand = db.Column(db.String(255), nullable=True)
     amount_collect = db.Column(db.String(255), nullable=True)
     comment = db.Column(db.Text, nullable=True)
     
-    
-    def __init__(self, ship_ID, order_ID, contact_info, ship_orderStore, ship_datetime, ship_area, ship_district, driver, car_type, car_ID, is_elevator, floors_byhand, amount_collect, ship_comment):
+    def __init__(self, ship_ID, order_ID, contact_info, ship_orderStore, ship_datetime, ship_area, ship_district, driver, car_type, car_ID, is_elevator, floors_byhand, paytype,amount_collect, ship_comment):
         self.ship_ID = ship_ID
         self.order_ID = order_ID        
         self.contact_info = contact_info
@@ -83,13 +83,15 @@ class Shippment(db.Model):
         self.car_ID = car_ID
         self.is_elevator = is_elevator
         self.floors_byhand = floors_byhand
+        self.paytype = paytype
         self.amount_collect = amount_collect
         self.comment = ship_comment
  
 class ShippmentSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('ship_ID','order_ID', 'contact_info', 'updated_at','ship_orderStore','ship_datetime', 'ship_area', 'ship_district', 'driver', 'car_type', 'car_ID', 'is_elevator', 'floors_byhand', 'amount_collect', 'comment')
+        fields = ('ship_ID', 'order_ID', 'contact_info', 'updated_at', 'ship_orderStore', 'ship_datetime', 'ship_area',
+                  'ship_district', 'driver', 'car_type', 'car_ID', 'is_elevator', 'floors_byhand', 'paytype', 'amount_collect', 'comment')
 
 class OperateLog(db.Model):
     __tablename__ = 'operate_log'
