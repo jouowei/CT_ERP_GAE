@@ -30,10 +30,23 @@ var ships = [{
     comment:''          //備註
     }];
 
+//出貨單schema
+var kuo_order = function(){
+        this.business_type = '郭元益',       //出貨單類型
+        this.delivery_date = '', //出貨日期 (送到客戶端)
+        this.client_name = '', //客戶名稱
+        this.order_ID = '', //出貨單號
+        this.car_type = '', //車型
+        this.car_ID = '', //車號
+        this.ships = '', //送貨單 (見下方ships)
+        this.delivery_fee = '', //運費
+        this.comment = '', //出貨單備註
+        this.updateduser = '' //使用者
+};
 //郭元益(發單門市)
 const order_store = ['中正', '鳳山', '岡山', '屏東', '總公司',
     '士林','中山','忠孝','新光A4','三重','板橋','永和',
-    '基隆','宜蘭','桃園','中壢','新竹',
+    '基隆','宜蘭','桃園','文化','中壢','新竹',
     '三民','大甲','彰化','員林','嘉義','成功','東寧','新營','二階'
         ];
         
