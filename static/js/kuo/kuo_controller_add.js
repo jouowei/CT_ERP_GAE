@@ -1,37 +1,3 @@
-var myApp = angular.module('deliveyform',[]);
-
-//依照欄位key篩選data
-myApp.filter('unique', function() {
-    return function(input, key) {
-        var unique = {};
-        var uniqueList = [];
-        for(var i = 0; i < input.length; i++){
-            if(typeof unique[input[i][key]] == "undefined"){
-                unique[input[i][key]] = "";
-                uniqueList.push(input[i]);
-            }
-        }
-        return uniqueList;
-    };
-});
-
-//自動focus到最後一行
-myApp.directive('customAutofocus', function() {
-  return{
-         restrict: 'A',
-
-         link: function(scope, element, attrs){
-           scope.$watch(function(){
-             return scope.$eval(attrs.customAutofocus);
-             },function (newValue){
-               if (newValue == true){
-                   element[0].focus();
-               }
-           });
-         }
-     };
-});
-
 //資料控制部分
 myApp.controller('formCtrl', function($scope,$http) {
     $scope.order = order;
@@ -98,7 +64,7 @@ myApp.controller('formCtrl', function($scope,$http) {
             arriveBefore:'',
             ship_datetime:'',   //送達時間
             contact_info:'',    //客戶連絡電話 or 地址
-            ship_area:$scope.order.ships[0].ship_area,       //縣市
+            ship_area: $scope.order.ships[0].ship_area,       //縣市
             ship_district:'',   //區域
             car_ID:'',          //車號
             is_elevator:'',     //是否有搭電梯 (+100)
@@ -122,6 +88,7 @@ myApp.controller('formCtrl', function($scope,$http) {
             return obj;
         }
     };
+
     //驗證資料 & 計算價格
     $scope.validateNcal = function(order){
         var errormsg = "";
@@ -218,48 +185,35 @@ myApp.controller('formCtrl', function($scope,$http) {
             return false;
         }
     };
+
     //送出資料
     $scope.submitForm = function() {
-        $("input[type=button]").attr("disabled", "disabled");
-        $("input[type=text]").attr("disabled", "disabled");
-        $("input[type=select]").attr("disabled", "disabled");
+        disableUI(true);
 
-/*
-        var SUBMIT_ORDER_API = "http://localhost/order";
-        var SUBMIT_ORDER_API = "https://ct-erp.appspot.com/order";
-        var SUBMIT_ORDER_API = "https://jt-erp.appspot.com/order";
-        */
         var SUBMIT_ORDER_API = document.location.origin + "/order";
         var submitOrder;
         submitOrder = order;
         submitOrder.updateduser = userID;
-        submitOrder.delivery_date = $('#datepicker').val();
-        submitOrder.comment = $('#commentText').val();
-        submitOrder.delivery_fee = $('#fee_result').val();
         $scope.order.ships.forEach(function(x,index){         
             if(x.ship_deleted === "1" ){
                 submitOrder.ships.splice(index,1)
             }
         });
-        try{
-            $http({
-                url: SUBMIT_ORDER_API,                         
-                method: "POST",
-                data: submitOrder,
-                headers:{'Content-Type': 'application/json','Access-Control-Allow-Origin': '*' }
-            })
-            .then(function(response) {
+
+        try {
+            $http
+            .post(SUBMIT_ORDER_API, JSON.stringify(submitOrder))
+            .then(function successCallback(response) {
                 if (response.status === 200) {
                 	alert(response.data);
                     if (response.data === "新增成功"){
-                        setTimeout(function(){ location.reload(); }, 1500);
+                        setTimeout(function(){ location.reload(); }, 500);
                     }
                 } 
                 else {
                     throw '系統出現問題，請通知工程師處理 "level:1" \n'+ response.data;
                 }
-            },
-            function errorCallback(response) {
+            }, function errorCallback(response) {
                 return alert('系統出現問題，請通知工程師處理 \n'+response.data);
             });
         }

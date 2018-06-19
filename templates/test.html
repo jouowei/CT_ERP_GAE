@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="content-type">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="google-signin-client_id" content="76189776530-gsaubd3vtti6471op5pvbma7oti031mv.apps.googleusercontent.com">
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+	<link rel="bookmark" href="/favicon.ico" />
+    <title>駿騰物流配送填單系統</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+	<!--<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js"></script>-->
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
+	<script type="text/javascript" src="js/rawdata.js"></script>
+	<script type="text/javascript" src="js/navbar.js"></script><!-- 上方導覽列 -->
+	<style> .g-signin2{ width: 100%; } .g-signin2 > div{ margin: 0 auto; }	</style>
+</head>
+<body>
+	<!-- 下方填單頁 -->
+	<div class="jumbotron text-center" >
+		<br>
+		<h1>歡迎進入填單系統</h1>
+		<p>請點選上方選單開始使用</p> 
+    </div>
+    <div id="app" class="ui vertical stripe segment">
+        <div class="ui container">
+            <div id="content" class="ui basic segment">
+                <h3 class="ui header">List of Users</h3>
+                <vuetable
+                    api-url="http://localhost/orders"
+                    table-wrapper="#content"
+                    :fields="columns"
+                    :item-actions="itemActions"
+                ></vuetable>
+            </div>
+        </div>
+    </div>
+<script>
+    const items = [
+    { isActive: true, age: 40, first_name: 'Dickerson', last_name: 'Macdonald' },
+    { isActive: false, age: 21, first_name: 'Larsen', last_name: 'Shaw' },
+    { isActive: false, age: 89, first_name: 'Geneva', last_name: 'Wilson' },
+    { isActive: true, age: 38, first_name: 'Jami', last_name: 'Carney' }
+    ]
+    new Vue({
+        el: '#app',
+        data: {
+            items: items,
+            columns: ['name','nickname','email','birthdate','gender','__actions'],
+            itemActions: [
+                {name: 'view-item',label: '',icon: 'zoom icon',class: 'ui teal button'},
+                {name: 'edit-item',label: '',icon: 'edit icon',class: 'ui orange button'},
+                {name: 'delete-item',label: '',icon: 'delete icon',class: 'ui red button'}
+            ]
+        },
+        methods: {
+            viewProfile: function (id) {
+                console.log('view profile with id:', id)
+            }
+        },
+        events: {
+            'vuetable:action': function (action, data) {
+                console.log('vuetable:action', action, data)
+                if (action == 'view-item') {
+                    this.viewProfile(data.id)
+                }
+            },
+            'vuetable:load-error': function (response) {
+                console.log('Load Error: ', response)
+            }
+        }
+    })
+</script>
+</body>
+</html>

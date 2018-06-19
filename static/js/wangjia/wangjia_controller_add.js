@@ -154,9 +154,7 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 		});
 		if ($scope.show.SubmitBtn){
 			//POST request
-			$("input[type=button]").attr("disabled", "disabled");
-			$("input[type=text]").attr("disabled", "disabled");
-			$("input[type=select]").attr("disabled", "disabled");
+			disableUI(true);
 
 			//var SUBMIT_ORDER_API = "https://jt-erp.appspot.com/order";
 			//var SUBMIT_ORDER_API = "https://ct-erp.appspot.com/order";

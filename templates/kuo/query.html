@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>駿騰物流配送填單系統</title>
+    
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.10/angular.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/js/gijgo.min.js" type="text/javascript"></script>
+	<link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script type="text/javascript" src="/js/rawdata.js"></script>
+    <script type="text/javascript" src="/js/navbar.js"></script>
+	<script type="text/javascript" src="/js/kuo/kuo_rawdata.js"></script>
+	<script type="text/javascript" src="/js/kuo/kuo_service.js"></script>
+	<script type="text/javascript" src="/js/kuo/kuo_controller_query.js"></script>
+</head>
+
+<body ng-app="kuo">
+    <!-- 下方填單頁 -->
+<div class="jumbotron text-center">
+    <h1>郭元益出貨單</h1>
+    <p>請依次填入需要的資訊</p>
+    <div class="text-center" style="margin-top: 30px">
+        <button id="btnAddPage" type="button" class="btn btn-lg btn-light" onclick="javascript:location.href='add.html'">新增紀錄</button>
+        <button id="btnQueryPage" type="button" class="btn btn-lg btn-primary" onclick="javascript:location.href='query.html'">查詢紀錄</button>
+        <button id="btnReportPage" type="button" class="btn btn-lg btn-light" onclick="javascript:window.open('https://docs.google.com/spreadsheets/d/144b1jIFVD_wx3DQB9tCkpFaTmXTauETqOXn_sJF9bNE/edit?usp=sharing')">瀏覽報表</button>
+    </div>
+    </div>                 
+    <div class="container" ng-controller="queryForm" style="border:3px dashed #138496; padding: 20px;">
+        <form id="query_form" ng-submit="queryData()">
+            <div>
+                <!--1.出貨單編號-->
+                <div class="form-group col-sm">
+                    <label for="delivery_order">送貨單號</label>
+                    <input type="text" class="form-control" id="delivery_order" ng-model="query.ID" placeholder="請輸入出貨單號" required />
+                    <!---<small id="deliveryHelp" class="form-text text-muted">請正確輸入單號</small>	-->
+                </div> 
+                <button type="submit" id="submit_btn" class="btn btn-primary btn-lg" ng-model="query" ng-click="queryData()" style="margin-left: 15px;">單據送出</button>
+            </div>
+        </form>
+    </div>
+    <div class="container" ng-controller="resultForm" style="padding: 20px;">
+		<form id="order_form" ng-show="kuo.show">
+			<!--1.配送日期-->
+			<div class="row">
+				<label for="datepicker">1.配送日期</label>
+				<div class="form-group col-sm">
+					<input type="text" class="form-control" width="276" value = "{{kuo.data.delivery_date}}" ng-model="kuo.data.delivery_date"  required/>
+				</div>
+			</div>
+			<!--2.出貨單編號-->
+			<div class = "row">
+				<label for="delivery_order">2.出貨單號</label>
+				<div class="form-group col-sm">
+                    <input type="text" class="form-control" width="276" id="delivery_order" 
+                    value = "{{kuo.data.order_ID}}"
+					placeholder="請輸入出貨單號" 
+					ng-model="kuo.data.order_ID" 
+					maxlength="7" 
+					disabled
+					required />
+					<!---<small id="deliveryHelp" class="form-text text-muted">請正確輸入單號</small>	-->			
+				</div>
+			</div>
+			<!--3.送貨車型-->
+			<div class = "row">
+                <label for="delivery_driver">3.出貨車型</label>
+				<div class="form-group col-sm">
+                    <input type="text" class="form-control" width="276" value = "{{kuo.data.ships[0].car_type}}" 
+					disabled/>	
+				</div>
+			</div>
+			<!--4.送貨單內容-->
+			<div class ="row">
+				<label for="ship_order">4.車趟細節</label>
+				<div class="form-group">
+					<table id="ship_table" class="table order-list">
+						<thead>
+						</thead>
+						<tbody id="tblShipContent" ng-repeat="ship in kuo.data.ships">		
+							<tr>
+                                <td>	
+                                    發單門市
+                                    <select 
+                                        ng-init="ship.ship_orderStore"
+										ng-model="ship.ship_orderStore" 
+										ng-options="order_store as order_store for order_store in order_store" 
+										class="form-control" value="{{ship.ship_orderStore}}"
+										required/> 
+									</select>	
+									送貨單號
+									<input 
+										id = "input_ship_ID"
+										type="text" 
+                                        class="form-control" 
+                                        value = "{{ship.ship_ID}}"
+										ng-model="ship.ship_ID" 
+										placeholder="送貨單號" 
+										maxlength="14"
+										disabled
+										required/>
+								</td>
+                                <td>聯絡人
+									<input type="text" class="form-control" value = "{{ship.contact_info}}" ng-model="ship.contact_info" placeholder="聯絡人資訊" required/>
+								</td>
+                                <td style="width:150px">配送區域：<br>
+                                    {{ship.ship_area}}
+                                    {{ship.ship_district}}<br><br>
+                                    電梯：
+                                    {{ship.is_elevator}}<br>
+									手搬樓層：
+                                    {{ship.floors_byhand}}
+                                </td>
+                                <td>預收款
+									<input type="text" class="form-control" ng-model="ship.amount_collect" value="{{ship.amount_collect}}" required/>
+								    付款方式
+									<select class="form-control" id="is_elevator" ng-model="ship.paytype" value="{{ship.paytype}}">
+										<option>現金</option>
+										<option>支票</option>
+									</select>
+                                   </td>
+								<td>	
+									司機姓名	
+									<select 
+                                        ng-model="ship.driver"
+                                        value="{{ship.driver}}"
+										ng-options="drivers for drivers in drivers" 
+										class="form-control custom-select"
+										style="width:auto;" 
+										required/>
+									</select>		
+								</td>
+                                <td>	
+									指定時間		
+									<input type="text" class="form-control" ng-model="ship.ship_datetime" value="{{ship.ship_datetime}}" required/>	
+								</td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>		
+								<td colspan="8">	
+								<!-- 5.備註 -->
+								<div class="form-group">
+										<label for="order_comment">5.備註</label>
+										<textarea class="form-control" id="commentText" ng-model="kuo.data.comment" rows="5"></textarea>
+								</div>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="4" style="text-align: left;">
+                                </td>
+								<td style="text-align: right;">
+									<input type="button" class="btn btn-lg btn-info " id="cal_fee" value="確認修改" ng-model="kuo.data" ng-click="validateNcal()" />
+								</td>
+								<td colspan="2" >
+									<input type="button" class="btn btn-lg btn-light form-control" id="fee_result" value="{{kuo.data.delivery_fee}}" ng-model="kuo.data.delivery_fee" readonly/>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+			<button type="submit" class="btn btn-primary" ng-model="kuo.data" ng-show="SubmitBtn" ng-click="submitForm()">單據送出</button>
+			
+		</form>
+    </div>
+</body>
+
+</html>

@@ -19,16 +19,17 @@
     <script type="text/javascript" src="/js/navbar.js"></script>
 	<script type="text/javascript" src="/js/jslib/sha256.min.js"></script>
 	<script type="text/javascript" src="/js/kuo/kuo_rawdata.js"></script>
-	<script type="text/javascript" src="/js/kuo/kuo_controller.js"></script>
+	<script type="text/javascript" src="/js/kuo/kuo_service.js"></script>
+	<script type="text/javascript" src="/js/kuo/kuo_controller_add.js"></script>
 </head>
-<body ng-app="deliveyform" ng-controller="formCtrl">
+<body ng-app="kuo" ng-controller="formCtrl">
 	<!-- 下方填單頁 -->
 	<div class="jumbotron text-center">
 		<h1>郭元益出貨單</h1>
 		<p>請依次填入需要的資訊</p> 
         <div class="text-center" style="margin-top: 30px">
             <button id="btnAddPage" type="button" class="btn btn-lg btn-primary" onclick="javascript:location.href='add.html'">新增紀錄</button> 
-            <button id="btnQueryPage" type="button" class="btn btn-lg btn-light" onclick="javascript:location.href='query.html'" disabled>查詢紀錄</button> 
+            <button id="btnQueryPage" type="button" class="btn btn-lg btn-light" onclick="javascript:location.href='query.html'" >查詢紀錄</button> 
             <button id="btnReportPage" type="button" class="btn btn-lg btn-light" onclick="javascript:window.open('https://docs.google.com/spreadsheets/d/144b1jIFVD_wx3DQB9tCkpFaTmXTauETqOXn_sJF9bNE/edit?usp=sharing')">瀏覽報表</button>
         </div>
 	</div>
@@ -109,7 +110,7 @@
                                 <td>聯絡人
 									<input type="text" class="form-control" ng-model="ship.contact_info" placeholder="聯絡人資訊" required/>
 								</td>
-                                <td>送貨區域
+                                <td>配送區域
 									<select 
 									ng-model="ship.ship_area" 
 									ng-options="dd.city as dd.city for dd in rawdata | unique:'city'" 
@@ -201,7 +202,7 @@
 			<!-- 5.備註 -->
 			<div class="form-group">
 					<label for="order_comment">5.備註</label>
-					<textarea class="form-control" id="commentText" rows="5"></textarea>
+					<textarea class="form-control" id="commentText" ng-model="order.comment" rows="5"></textarea>
 			</div>
 			<button type="submit" class="btn btn-primary" ng-model="order" ng-click="validateNcal(order)">單據送出</button>
 			

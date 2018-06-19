@@ -122,7 +122,7 @@ def add_order(rawdata):
                     raise
 
                 #add log
-                new_log = OperateLog(business_type, "ADD", order_ID, ship_ID, updateduser)
+                new_log = OperateLog(business_type, "ADD", order_ID, oneShip.ship_ID, updateduser)
                 try:
                     db.session.add(new_log)
                     db.session.commit()
@@ -166,49 +166,112 @@ def get_diselprice():
 @app.route("/delivery/<id>", methods=["PUT", "POST"])
 def delivery_update(id):
     delivery = Delivery.query.filter_by(order_ID=id).first()
+    if request.json:
+        rawdata = request.get_json(force=True)
+        try:
+            if len(checkKey(rawdata, 'business_type')) > 0:
+                business_type = checkKey(rawdata, 'businesstype')
+            else:
+                business_type = checkKey(rawdata, 'businesstype')
+            delivery.businesstype = business_type
+        except:
+            pass
+
+        try:
+            delivery_date = request.json['delivery_date']
+            delivery.delivery_date = delivery_date
+        except:
+            pass
+        try:
+            updateduser = request.json['updateduser']
+            delivery.updateduser = updateduser
+        except:
+            pass
+        try:
+            delivery_fee = request.json['delivery_fee']
+            delivery.delivery_fee = delivery_fee
+        except:
+            pass
+        try:
+            good_size = request.json['good_size']
+            delivery.good_size = good_size
+        except:
+            pass
+        try:
+            #comment = '\ new comment' + request.json['comment']
+            comment = request.json['comment']
+            delivery.comment = comment
+        except:
+            pass
+        delivery.updated_at = datetime.utcnow()
+        db.session.commit() 
+
+        #add log
+        new_log = OperateLog(business_type, "UPDATE", id, '', updateduser)
+        try:
+            db.session.add(new_log)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            raise
+
+        return "資料更新成功"
+
+# endpoint to update shippment entry by order id
+
+# 更新shippment
+@app.route("/shippment/<id>", methods=["PUT", "POST"])
+def shippment_update(id):
+    shippment = Shippment.query.filter_by(ship_ID=id).first()
     try:
-        businesstype = request.json['business_type']
-        delivery.businesstype = businesstype
+        contact_info = request.json['contact_info']
+        shippment.contact_info = contact_info
     except:
         pass
     try:
-        updateduser = request.json['updateduser']
-        delivery.updateduser = updateduser
+        ship_orderStore = request.json['ship_orderStore']
+        shippment.ship_orderStore = ship_orderStore
     except:
         pass
+
     try:
-        delivery_fee = request.json['delivery_fee']
-        delivery.delivery_fee = delivery_fee
+        ship_datetime = request.json['ship_datetime']
+        shippment.ship_datetime = ship_datetime
     except:
         pass
+
     try:
-        good_size = request.json['good_size']
-        delivery.good_size = good_size
+        driver = request.json['driver']
+        shippment.driver = driver
     except:
         pass
+
     try:
-        #comment = '\ new comment' + request.json['comment']
-        comment = request.json['comment']
-        delivery.comment += comment
+        amount_collect = request.json['amount_collect']
+        shippment.amount_collect = amount_collect
     except:
         pass
-    delivery.updated_at = datetime.utcnow()
-    db.session.commit() 
+
+    try:
+        paytype = request.json['paytype']
+        shippment.paytype = paytype
+    except:
+        pass
+
+    db.session.commit()
 
     #add log
-    businesstype1 = request.json['business_type']
-    new_log = OperateLog(businesstype1, "UPDATE", id, "", updateduser)
     try:
-        db.session.add(new_log)
+        order_ID = request.json['order_ID']
+        updateduser = request.json['updateduser']
+        db.session.add(OperateLog("", "UPDATE", order_ID, id, updateduser))
         db.session.commit()
     except:
         db.session.rollback()
         raise
-
     return "資料更新成功"
-################################################################
 
-# new endpoint to parse post with Json array
+# 到DB取值
 @app.route("/order", methods=["POST"])
 def acceptPOST():
     if request.json:
@@ -227,6 +290,7 @@ def acceptPOST():
             return add_order(rawdata)
     else:
         return 'Error: no data in the POST request'
+################################################################
 
 # endpoint to show all delivery entries
 @app.route("/delivery", methods=["GET"])
@@ -296,92 +360,6 @@ def get_shippment():
     all_shippments = Shippment.query.all()
     result = shippments_schema.dump(all_shippments)
     return jsonify(result.data)
-
-# endpoint to update shippment entry by order id
-@app.route("/shippment/<id>", methods=["PUT", "POST"])
-def shippment_update(id):
-    shippment = Shippment.query.filter_by(order_ID=id).first()
-    try:
-        contact_info = request.json['contact_info']
-        shippment.contact_info = contact_info
-    except:
-        pass
-
-    try:
-        ship_ID = request.json['ship_ID']
-        shippment.ship_ID = ship_ID
-    except:
-        pass
-
-    try:
-        ship_orderStore = request.json['ship_orderStore']
-        shippment.ship_orderStore = ship_orderStore
-    except:
-        pass
-
-    try:
-        ship_datetime = request.json['ship_datetime']
-        shippment.ship_datetime = ship_datetime
-    except:
-        pass
-
-    try:
-        ship_area = request.json['ship_area']
-        shippment.ship_area = ship_area
-    except:
-        pass
-
-    try:
-        ship_district = request.json['ship_district']
-        shippment.ship_district = ship_district
-    except:
-        pass
-
-    try:
-        driver = request.json['driver']
-        shippment.driver = driver
-    except:
-        pass
-
-    try:
-        car_type = request.json['car_type']
-        shippment.car_type = car_type
-    except:
-        pass
-
-    try:
-        car_ID = request.json['car_ID']
-        shippment.car_ID = car_ID
-    except:
-        pass
-
-    try:
-        is_elevator = request.json['is_elevator']
-        shippment.is_elevator = is_elevator
-    except:
-        pass
-
-    try:
-        floors_byhand = request.json['floors_byhand']
-        shippment.floors_byhand = floors_byhand
-    except:
-        pass
-
-    try:
-        amount_collect = request.json['amount_collect']
-        shippment.amount_collect = amount_collect
-    except:
-        pass
-
-    try:
-        comment = '/ Comment: ' + request.json['ship_comment']
-        shippment.comment += comment
-    except:
-        pass
-
-    db.session.commit()
-    return shippment_schema.jsonify(shippment)
-
 
 # endpoint to delete delivery entry by order id
 @app.route("/shippment/<id>", methods=["DELETE"])

@@ -56,7 +56,7 @@ myApp.controller('resultForm', function ($scope, $http, myService, myFactory) {
                 break;
             }
             $scope.show.SubmitBtn = true;
-            changeUIstatus(true);
+            disableUI(true);
             if ($scope.show.SubmitBtn) {
                 for (let j = 0; j < $scope.wangjias.data.length; j++) {
                     const ship = $scope.wangjias.data[j].initOrder;
@@ -67,7 +67,7 @@ myApp.controller('resultForm', function ($scope, $http, myService, myFactory) {
                             if (!confirmAns) {
                                 rawdata[i].delivery_fee = ship.delivery_fee;
                                 $scope.show.SubmitBtn = false;
-                                changeUIstatus(false);
+                                disableUI(false);
                                 break;
                             }
                         }
@@ -77,14 +77,14 @@ myApp.controller('resultForm', function ($scope, $http, myService, myFactory) {
                             if (!confirmAns) {
                                 rawdata[i].good_size = ship.good_size;
                                 $scope.show.SubmitBtn = false;
-                                changeUIstatus(false);
+                                disableUI(false);
                                 break;
                             }
                         }
                         if (ship.comment == rawdata[i].comment) {
                             alert('注意：修改紀錄必須填寫備註。');
                             $scope.show.SubmitBtn = false;
-                            changeUIstatus(false);
+                            disableUI(false);
                             break;
                         }
                     }
