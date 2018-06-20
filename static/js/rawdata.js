@@ -125,12 +125,12 @@ function disableUI(boolDisable = false){
 /**
  * Displays overlay with "Please wait" text. Based on bootstrap modal. Contains animated progress bar.
  */
-function showPleaseWait() {
+function showPleaseWait(title="請稍後...") {
     var modalLoading = '<div class="modal" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false" role="dialog">\
         <div class="modal-dialog">\
             <div class="modal-content">\
                 <div class="modal-header">\
-                    <h4 class="modal-title">請稍後...</h4>\
+                    <h4 class = "modal-title"> '+title+' </h4>\
                 </div>\
                 <div class="modal-body">\
                     <div class="progress">\

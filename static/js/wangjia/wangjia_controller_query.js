@@ -111,6 +111,7 @@ myApp.controller('resultForm', function ($scope, $http, myService, myFactory) {
         });
         //POST request
         if ($scope.show.SubmitBtn) {
+            showPleaseWait("請稍候，資料儲存中...");
             for (let i = 0; i < arrFinalData.length; i++) {
                 const order = arrFinalData[i];
                 var SUBMIT_ORDER_API = document.location.origin + "/delivery/" + order.order_ID;
@@ -122,9 +123,10 @@ myApp.controller('resultForm', function ($scope, $http, myService, myFactory) {
                                 if (response.status === 200) {
                                     alert(response.data);
                                     if (response.data === "資料更新成功") {
+                                        hidePleaseWait();
                                         setTimeout(function () {
                                             location.reload();
-                                        }, 500);
+                                        }, 100);
                                     }
                                 } else {
                                     throw '系統出現問題，請通知工程師處理 "level:1" \n' + response.data;

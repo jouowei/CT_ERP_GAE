@@ -189,6 +189,7 @@ myApp.controller('formCtrl', function($scope,$http) {
     //送出資料
     $scope.submitForm = function() {
         disableUI(true);
+        showPleaseWait("請稍候，資料儲存中...");
 
         var SUBMIT_ORDER_API = document.location.origin + "/order";
         var submitOrder;
@@ -205,9 +206,10 @@ myApp.controller('formCtrl', function($scope,$http) {
             .post(SUBMIT_ORDER_API, JSON.stringify(submitOrder))
             .then(function successCallback(response) {
                 if (response.status === 200) {
-                	alert(response.data);
-                    if (response.data === "新增成功"){
-                        setTimeout(function(){ location.reload(); }, 500);
+                    hidePleaseWait();
+                    alert(response.data);
+                    if (response.data === "新增成功") {
+                        location.reload();
                     }
                 } 
                 else {

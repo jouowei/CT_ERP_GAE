@@ -155,6 +155,7 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 		if ($scope.show.SubmitBtn){
 			//POST request
 			disableUI(true);
+			showPleaseWait("請稍候，資料儲存中...");
 
 			//var SUBMIT_ORDER_API = "https://jt-erp.appspot.com/order";
 			//var SUBMIT_ORDER_API = "https://ct-erp.appspot.com/order";
@@ -165,10 +166,11 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 					.post(SUBMIT_ORDER_API, JSON.stringify(arrFinalData))
 					.then(function (response) {
 							if (response.status === 200) {
+								hidePleaseWait();
 								alert(response.data);
 								setTimeout(function () {
 									location.reload();
-								}, 500);
+								}, 100);
 							} else {
 								throw '系統出現問題，請通知工程師處理 "level:1" \n' + response.data;
 							}
