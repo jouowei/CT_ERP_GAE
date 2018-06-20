@@ -10,32 +10,51 @@ myApp.controller('queryForm', function ($scope, $http, myService, myFactory) {
     }
     $scope.queryData = function () {
         let delivery_API = document.location.origin + "/delivery/" + $scope.query.ID;
-        
+        if (typeof $scope.query.ID == "undefined" || $scope.query.ID.length == 0) {
+            return;
+        } else {
+            myFactory.data = new Object();
+            myFactory.initData = new Object();
+            myFactory.DataTable = false;
+        }
         //用order ID 查詢 order
         myService.getDataFromDB($http, delivery_API,function(r) {
+            showPleaseWait();
             let ship_API = document.location.origin + "/shippment/" + $scope.query.ID;
             //空資料
             if (JSON.stringify(r) == "{}") {
                 //用ship ID 查詢 ship
                 myService.getDataFromDB($http, ship_API, function (i) {
-                    if (JSON.stringify(i) == "{}") {
+                    if (JSON.stringify(i) == "{}" || i.length == 0) {
                         alert("查詢不到資料! \n請檢查單號是否正確");
+                        hidePleaseWait();
+                        return;
                     } else {
                         //找到ship_ID，用ship的Order_ID去找Order及ship
                         if (i.length > 0) {
                             if (i[0].order_ID.length > 0) {
                                 let d = document.location.origin + "/delivery/" + i[0].order_ID
                                 myService.getDataFromDB($http, d, function (j) {
-                                    if (j.order_ID.length > 0) {
-                                        $scope.kuo = j;
-                                        let k = document.location.origin + "/shippment/" + j.order_ID;
-                                        myService.getDataFromDB($http, k, function (x) {
-                                            if (x.length > 0) {
-                                                $scope.kuo.ships = x;
-                                            }
-                                        });
+                                    if (JSON.stringify(i) !== "{}" ) {
+                                        if (j.order_ID.length > 0) {
+                                            $scope.kuo = j;
+                                            let k = document.location.origin + "/shippment/" + j.order_ID;
+                                            myService.getDataFromDB($http, k, function (x) {
+                                                if (x.length > 0) {
+                                                    $scope.kuo.ships = x;
+                                                    hidePleaseWait();
+                                                    return;
+                                                }
+                                            });
+                                        } else {
+                                            $scope.kuo = new kuo_order();
+                                            hidePleaseWait();
+                                            return;
+                                        }
                                     } else {
-                                        $scope.kuo = new kuo_order();
+                                        alert("查詢不到資料! \n請檢查單號是否正確");
+                                        hidePleaseWait();
+                                        return;
                                     }
                                 });
                             }
@@ -47,6 +66,7 @@ myApp.controller('queryForm', function ($scope, $http, myService, myFactory) {
                 myService.getDataFromDB($http, ship_API, function (y) {
                     if (y.length > 0) {
                         $scope.kuo.ships = y;
+                        hidePleaseWait();
                     }
                 });
             }
