@@ -53,6 +53,7 @@ var ship = function(){
     this.contact_info = '';    //客戶連絡電話 or 地址
     this.ship_area = '';       //縣市
     this.ship_district = '';   //區域
+    this.shipUnits = 0;        //數量
 };
 
 //旺家用(飲料關鍵字)
@@ -187,3 +188,11 @@ const wangjia_beverage_lookup = [
 const columnKeys = [
     "銷售單/調撥單號", "交貨單號", "交貨日期", "交貨單建立日期", "收貨人名稱", "收貨地址",
     "物料", "單品項才數", "交貨數量", "金額(未稅)"];
+
+const manualItems = [
+   {id: 1, name:"退貨整理費", unitprice:150, unit: "板"},
+   {id: 2, name:"膠膜費", unitprice:250, unit: "才"},
+   {id: 3, name:"紙箱",unitprice:7.5, unit: "才"}, 
+   {id: 4, name:"棧板",unitprice:0, unit: "板"}, 
+   {id: 5, name:"堆高機",unitprice:0, unit: "次"}
+]

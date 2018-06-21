@@ -90,7 +90,6 @@ myApp.controller('resultForm', function ($scope, $http, myService, myFactory) {
         let rawData = $scope.kuo.initData;
         let confirmConent = "";
         $scope.SubmitBtn = true;
-        disableUI(true);
         if (rawData.delivery_date !== editedData.delivery_date) {
             confirmConent = '請確認配送日期：\n調整前：' + rawData.delivery_date + '\n 調整後：' + editedData.delivery_date;
             $scope.SubmitBtn = false;
@@ -98,13 +97,11 @@ myApp.controller('resultForm', function ($scope, $http, myService, myFactory) {
             if (!confirmAns) {
                 rawdata.delivery_fee = editedData.delivery_date;
                 $scope.show.SubmitBtn = false;
-                disableUI(false);
                 return;
             }
         } else if (rawData.comment == editedData.comment){
             alert('注意：修改紀錄必須填寫備註。');
             $scope.SubmitBtn = false;
-            disableUI(false);
             return;
         } else {
             for (i = 0; i < editedData.ships.length; i++){
@@ -116,7 +113,6 @@ myApp.controller('resultForm', function ($scope, $http, myService, myFactory) {
                     if (!confirmAns) { 
                         editedData.ship_orderStore = rawShip.ship_orderStore;
                         $scope.SubmitBtn = false;
-                        disableUI(false);
                     }
                 }
                 if (editedShip.driver != rawShip.driver) {
@@ -125,7 +121,6 @@ myApp.controller('resultForm', function ($scope, $http, myService, myFactory) {
                     if (!confirmAns) {
                         editedData.driver = rawShip.driver;
                         $scope.SubmitBtn = false;
-                        disableUI(false);
                     }
                 }
                 if (editedShip.amount_collect != rawShip.amount_collect || editedShip.paytype != rawShip.paytype) {
@@ -135,7 +130,6 @@ myApp.controller('resultForm', function ($scope, $http, myService, myFactory) {
                         editedData.amount_collect = rawShip.amount_collect;
                         editedData.paytype = rawShip.paytype;
                         $scope.SubmitBtn = false;
-                        disableUI(false);
                     }
                 }
                 if (editedShip.ship_datetime != rawShip.ship_datetime) {
@@ -144,7 +138,6 @@ myApp.controller('resultForm', function ($scope, $http, myService, myFactory) {
                     if (!confirmAns) {
                         editedData.ship_datetime = rawShip.ship_datetime;
                         $scope.SubmitBtn = false;
-                        disableUI(false);
                     }
                 }
                 if (editedShip.contact_info != rawShip.contact_info) {
@@ -153,11 +146,11 @@ myApp.controller('resultForm', function ($scope, $http, myService, myFactory) {
                     if (!confirmAns) {
                         editedData.contact_info = rawShip.contact_info;
                         $scope.SubmitBtn = false;
-                        disableUI(false);
                     }
                 }
             }
         }
+        disableUI($scope.SubmitBtn); 
     };
 
     //送出資料

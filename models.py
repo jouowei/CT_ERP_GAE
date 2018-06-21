@@ -69,8 +69,9 @@ class Shippment(db.Model):
     floors_byhand = db.Column(db.String(255), nullable=True)
     amount_collect = db.Column(db.String(255), nullable=True)
     comment = db.Column(db.Text, nullable=True)
+    shipUnits = db.Column(db.String(255), nullable=True)
     
-    def __init__(self, ship_ID, order_ID, contact_info, ship_orderStore, ship_datetime, ship_area, ship_district, driver, car_type, car_ID, is_elevator, floors_byhand, paytype,amount_collect, ship_comment):
+    def __init__(self, ship_ID, order_ID, contact_info, ship_orderStore, ship_datetime, ship_area, ship_district, driver, car_type, car_ID, is_elevator, floors_byhand, paytype, amount_collect, ship_comment, shipUnits):
         self.ship_ID = ship_ID
         self.order_ID = order_ID        
         self.contact_info = contact_info
@@ -86,12 +87,13 @@ class Shippment(db.Model):
         self.paytype = paytype
         self.amount_collect = amount_collect
         self.comment = ship_comment
+        self.shipUnits = shipUnits
  
 class ShippmentSchema(ma.Schema):
     class Meta:
         # Fields to expose
         fields = ('ship_ID', 'order_ID', 'contact_info', 'updated_at', 'ship_orderStore', 'ship_datetime', 'ship_area',
-                  'ship_district', 'driver', 'car_type', 'car_ID', 'is_elevator', 'floors_byhand', 'paytype', 'amount_collect', 'comment')
+                  'ship_district', 'driver', 'car_type', 'car_ID', 'is_elevator', 'floors_byhand', 'paytype', 'amount_collect', 'comment', 'shipUnits')
 
 class OperateLog(db.Model):
     __tablename__ = 'operate_log'

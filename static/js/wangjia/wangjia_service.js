@@ -1,4 +1,4 @@
-var myApp = angular.module('wangjia',[]);
+var myApp = angular.module('wangjia',['ngMaterial', 'material.svgAssetsCache']);
 
 //MVC的M
 myApp.service('myService', function() {

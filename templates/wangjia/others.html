@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>駿騰物流配送填單系統</title>
+    
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.10/angular.js"></script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-animate.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-route.min.js"></script>
+	<script src="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.9/angular-material.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-aria.min.js"></script>
+	<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/t-114/svg-assets-cache.js"></script>
+	<link rel="stylesheet" href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.9/angular-material.css">
+	<script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/js/gijgo.min.js" type="text/javascript"></script>
+	<link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script type="text/javascript" src="/js/rawdata.js"></script>
+    <script type="text/javascript" src="/js/navbar.js"></script>
+	<script type="text/javascript" src="/js/jslib/moment.min.js"></script>
+    <script type="text/javascript" src="/js/wangjia/wangjia_service.js"></script>
+    <script type="text/javascript" src="/js/wangjia/wangjia_controller_others.js"></script>
+    <script type="text/javascript" src="/js/wangjia/wangjia_rawdata.js"></script>
+    <script type="text/javascript" src="/js/wangjia/wangjia_ext.js"></script>
+</head>
+
+<body ng-app="wangjia">
+    <!-- 下方填單頁 -->
+    <div class="jumbotron text-center">
+        <h1>市面物流-旺家</h1>
+		<p>特殊收入手開單介面，請依次填入需要的資訊</p> 
+        <div class="text-center" style="margin-top: 30px">
+            <button id="btnAddPage" type="button" class="btn btn-lg btn-light" onclick="javascript:location.href='add.html'">新增紀錄</button> 
+            <button id="btnQueryPage" type="button" class="btn btn-lg btn-light" onclick="javascript:location.href='query.html'">查詢紀錄</button> 
+            <button id="btnReportPage" type="button" class="btn btn-lg btn-light" onclick="javascript:window.open('https://docs.google.com/spreadsheets/d/1wmV7OOWY7erZMSmGhNwJLxKx9ouOT7Soxme0L0ru3iI/edit?usp=sharing')">瀏覽報表</button>
+            <button id="btnOthersPage" type="button" class="btn btn-lg btn-primary" onclick="javascript:location.href='others.html'">其他收入</button> 
+        </div>
+    </div>
+	<div class="container" ng-controller="inputForm">
+        <table class="table order-list">
+            <thead>
+                <th>開單日期</th>
+                <th>客戶名稱</th>
+                <th>品項</th>
+                <th>數量</th>
+                <th>單價</th>
+                <th>未稅價</th>
+                <th>備註</th>
+                <th></th>
+            </thead>
+            <tbody id="tblShipContent" ng-repeat="ship in order.ships | filter: customFilter">
+                <tr>
+                    <td>
+                        <div class="row">
+                            <div class="form-group col-sm">
+                                <md-datepicker ng-model="ship.ship_datetime" md-placeholder="請選擇日期"></md-datepicker>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" ng-model="ship.contact_info" placeholder="聯絡人資訊" style="width:120px;" required/>
+                    </td>
+                    <td>
+                        <select ng-model="ship.itemName" ng-options="items.name for items in items" 
+                        class="form-control" ng-change="updateUnitP(ship.itemName,$index)" style="width:auto;" required></select>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" ng-model="ship.shipUnits" ng-change="updatePrice($index)" ng-init="ship.floors_byhand=0" min="0" style="width:100px;" required/>
+                    </td>
+                    <td>
+                        <input type="button" class="btn btn-light form-control" value="{{ship.unitprice}}" style="width:100px;" /> 
+                    </td>
+                    <td>
+                        <input type="button" class="btn btn-light form-control"  value="{{ship.amount_collect}}" ng-model="ship.amount_collect" ng-init="ship.amount_collect=0" style="width:100px;"/>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control"  value="{{ship.comment}}" ng-model="ship.comment" >
+                    </td>
+                    <td>
+                        <input type="button" class="ibtnDel btn btn-danger form-control" ng-click="deleteShip(ship)" value="刪除">
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5" style="text-align: left;">
+                        <input type="button" class="btn btn-lg btn-block " id="addrow" value="新增點數" ng-click="addNewShip()" />
+                    </td>
+                    <td style="text-align: right;">
+                        <input type="button" class="btn btn-lg btn-info " id="cal_fee" value="運費試算" ng-model="order" ng-click="validateNcal($event)"/>
+                    </td>
+                    <td colspan="2">
+                        <input type="button" class="btn btn-lg btn-light form-control" id="fee_result" value="{{order.delivery_fee}}" ng-init="order.delivery_fee=0" readonly/>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+		<button type="submit" class="btn btn-primary" ng-model="order" ng-click="submitForm($event)" ng-show="show.SubmitBtn">單據送出</button>
+    </div>
+</body>
+
+</html>
