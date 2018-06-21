@@ -122,7 +122,7 @@ myApp.controller('inputForm', function ($scope, $http, $mdDialog) {
     };
 
 	//送出資料
-	$scope.submitForm = function (ev) {
+	$scope.submitForm = function () {
 		//資料整理
 		var submitOrder = new wangjia_other();
         var submitShips = [];
@@ -151,12 +151,11 @@ myApp.controller('inputForm', function ($scope, $http, $mdDialog) {
 					.then(function (response) {
 							if (response.status === 200) {
 								hidePleaseWait();
-								$scope.showAlert(ev, response.data);
+								alert(response.data);
 								setTimeout(function () {
 									location.reload();
 								}, 100);
 							} else {
-							    $scope.showAlert(ev, response.data);
 								throw '系統出現問題，請通知工程師處理 "level:1" \n' + response.data;
 							}
 						},
