@@ -41,7 +41,7 @@
                     <input type="text" class="form-control" id="delivery_order" ng-model="query.ID" placeholder="請輸入出貨單號" required />
                     <!---<small id="deliveryHelp" class="form-text text-muted">請正確輸入單號</small>	-->
                 </div> 
-                <button type="submit" id="submit_btn" class="btn btn-primary btn-lg" ng-model="query" ng-click="queryData()" style="margin-left: 15px;">單據送出</button>
+                <button type="submit" id="submit_btn" class="btn btn-primary btn-lg" ng-model="query" ng-click="queryData($event)" style="margin-left: 15px;">單據送出</button>
             </div>
         </form>
     </div>
@@ -156,7 +156,7 @@
 								<td colspan="4" style="text-align: left;">
                                 </td>
 								<td style="text-align: right;">
-									<input type="button" class="btn btn-lg btn-info " id="cal_fee" value="確認修改" ng-model="kuo.data" ng-click="validateNcal()" />
+									<input type="button" class="btn btn-lg btn-info " id="cal_fee" value="確認修改" ng-model="kuo.data" ng-click="validateNcal($event)" />
 								</td>
 								<td colspan="2" >
 									<input type="button" class="btn btn-lg btn-light form-control" id="fee_result" value="{{kuo.data.delivery_fee}}" ng-model="kuo.data.delivery_fee" readonly/>
