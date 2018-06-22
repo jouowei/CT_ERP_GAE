@@ -210,10 +210,10 @@ function getDieselDiscount ($http,API = "") {
 
 //把order轉為wangjia格式
 function convert_DbData2Wangjia(order = new order(), ships = new ships()){
-    let objWangjia = new wangjia();
     let arrWangjia = new Array();
     let specialKey = ["order_ID","ship_ID","delivery_fee","good_size","comment"]
     for (j = 0; j < ships.length; j++) {
+        let objWangjia = new wangjia();
         if (order.order_ID.length > 0) {
             const objOrderKeys = Object.keys(order);
             for (i = 0; i < objOrderKeys.length; i++) {

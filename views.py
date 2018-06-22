@@ -171,7 +171,7 @@ def delivery_update(id):
         rawdata = request.get_json(force=True)
         try:
             if len(checkKey(rawdata, 'business_type')) > 0:
-                business_type = checkKey(rawdata, 'businesstype')
+                business_type = checkKey(rawdata, 'business_type')
             else:
                 business_type = checkKey(rawdata, 'businesstype')
             delivery.businesstype = business_type
@@ -225,6 +225,11 @@ def delivery_update(id):
 def shippment_update(id):
     shippment = Shippment.query.filter_by(ship_ID=id).first()
     try:
+        driver = request.json['driver']
+        shippment.driver = driver
+    except:
+        pass
+    try:
         contact_info = request.json['contact_info']
         shippment.contact_info = contact_info
     except:
@@ -241,11 +246,6 @@ def shippment_update(id):
     except:
         pass
 
-    try:
-        driver = request.json['driver']
-        shippment.driver = driver
-    except:
-        pass
 
     try:
         amount_collect = request.json['amount_collect']
@@ -257,6 +257,12 @@ def shippment_update(id):
         shipUnits = request.json['shipUnits']
         shippment.shipUnits = shipUnits
     except:
+        pass
+        
+    try:
+        comment = request.json['comment']
+        shippment.comment = comment
+    except: 
         pass
 
     try:

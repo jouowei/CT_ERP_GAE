@@ -19,7 +19,7 @@ myApp.controller('queryForm', function ($scope, $http, myService, myFactory) {
         }
         //用order ID 查詢 order
         myService.getDataFromDB($http, delivery_API,function(r) {
-            showPleaseWait();
+            showPleaseWait("請稍後...");
             let ship_API = document.location.origin + "/shippment/" + $scope.query.ID;
             //空資料
             if (JSON.stringify(r) == "{}") {
@@ -35,7 +35,7 @@ myApp.controller('queryForm', function ($scope, $http, myService, myFactory) {
                             if (i[0].order_ID.length > 0) {
                                 let d = document.location.origin + "/delivery/" + i[0].order_ID
                                 myService.getDataFromDB($http, d, function (j) {
-                                    if (JSON.stringify(i) !== "{}" ) {
+                                    if (JSON.stringify(j) !== "{}" ) {
                                         if (j.order_ID.length > 0) {
                                             $scope.kuo = j;
                                             let k = document.location.origin + "/shippment/" + j.order_ID;
@@ -91,11 +91,10 @@ myApp.controller('resultForm', function ($scope, $http, myService, myFactory) {
         let confirmConent = "";
         $scope.SubmitBtn = true;
         if (rawData.delivery_date !== editedData.delivery_date) {
-            confirmConent = '請確認配送日期：\n調整前：' + rawData.delivery_date + '\n 調整後：' + editedData.delivery_date;
-            $scope.SubmitBtn = false;
+            confirmConent = '請確認配送日期：\n調整前：' + rawData.delivery_date + '\n調整後：' + editedData.delivery_date;
             let confirmAns = confirm(confirmConent);
             if (!confirmAns) {
-                rawdata.delivery_fee = editedData.delivery_date;
+                editedData.delivery_date = rawdata.delivery_fee;
                 $scope.show.SubmitBtn = false;
                 return;
             }

@@ -86,12 +86,17 @@
                 </thead>
                 <tbody ng-repeat="ship in wangjias.data">
                     <tr>
-                        <th valign="center" rowspan="0">{{$index+1}}</th>
+                        <th valign="center" rowspan="0">{{ $index+1 }}</th>
                         <td>
                             {{ ship.order_ID }}
                         </td>
                         <td>
-                            {{ship.driver}}
+                            <textarea type="text" class="form-control" rows="4" 
+                                ng-list="&#10;" 
+                                ng-model="ship.driver" 
+                                style="width:97px;" 
+                                readonly>
+                            </textarea>
                         </td>
                         <td>
                             {{ship.clientname}}
@@ -122,7 +127,7 @@
                         <td style="text-align: right;">
                             <input type="button" class="btn btn-lg btn-info form-control" value="運費試算" ng-click="validateNcal(wangjias.data)" />
                         </td>
-                        <td>
+						<td>
                             <button type="submit" id="submit_btn" class="btn btn-primary btn-lg" ng-show="show.SubmitBtn" ng-click="submitForm()">單據送出</button>
                         </td>
                     </th>
