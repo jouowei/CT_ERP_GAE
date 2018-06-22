@@ -152,3 +152,35 @@ function showPleaseWait(title="請稍後...") {
 function hidePleaseWait() {
     $("#pleaseWaitDialog").modal("hide");
 }
+
+//Modal版錯誤視窗
+function showAlert($mdDialog, ev, title = "", content = "", ok = "確認") {
+    $mdDialog.show(
+        $mdDialog.alert()
+        .parent(angular.element(document.body))
+        .clickOutsideToClose(true)
+        .title(title)
+        .textContent(content)
+        .ok(ok)
+        .targetEvent(ev)
+    );
+};
+
+//Modal版確認視窗 (目前有問題)
+function showConfirm($mdDialog, ev, title = "", content = "", ok = "確認", cancel= "取消") {
+    // Appending dialog to document.body to cover sidenav in docs app
+    var confirm = $mdDialog.confirm()
+        .title(title)
+        .textContent(content)
+        .targetEvent(ev)
+        .ok(ok)
+        .cancel(cancel);
+
+    $mdDialog.show(confirm).then(
+        function confirmCallback() {
+            return true;
+        },
+        function cancelCallback() {
+            return false;
+        });
+};

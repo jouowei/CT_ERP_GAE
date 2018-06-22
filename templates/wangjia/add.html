@@ -70,6 +70,7 @@
                             <th rowspan="2">#</th>
                             <th>送貨車次</th>
                             <th>司機姓名</th>
+                            <th></th>
                             <th>日期</th>
                             <th>送貨地點</th>
                             <th>單據號碼</th>
@@ -83,9 +84,23 @@
                             <td>
                                 {{ ship.order_ID }}
                             </td>
-                            <td>
-                                <select ng-model="ship.driver" ng-options="drivers for drivers in drivers" class="form-control custom-select" style="width:auto;" required/>
+                            <td>	
+                                <select 
+                                    ng-model="ship.driver" 
+                                    ng-options="drivers for drivers in drivers" 
+                                    class="form-control custom-select"
+                                    style="width:auto;" 
+                                    multiple="true"
+                                    required/>
                                 </select>
+                            </td>
+                            <td>
+                                <textarea type="text" class="form-control" rows="4" 
+                                    ng-list="&#10;" 
+                                    ng-model="ship.driver" 
+                                    style="width:97px;" 
+                                    readonly>
+                                </textarea>
                             </td>
                             <td style="width:11%">
                                 製單：{{ ship.pickupdate | date:'MM-dd'}}
@@ -133,7 +148,7 @@
                                 <input type="button" id="total_delivery_fee" class="btn btn-lg btn-light form-control" value="{{orderPrice}}"  style="margin:2px; width: 125px;" readonly/>
                             </td>
 							<td style="text-align: right;">
-								<input type="button" class="btn btn-lg btn-info form-control"  id="cal_fee" value="運費試算" ng-model="order" ng-click="validateNcal(wangjias)" />
+								<input type="button" class="btn btn-lg btn-info form-control"  id="cal_fee" value="運費試算" ng-model="order" ng-click="validateNcal($event)" />
 							</td>
                         </th>
                     </tfoot>

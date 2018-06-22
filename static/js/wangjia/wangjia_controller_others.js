@@ -1,4 +1,4 @@
-myApp.controller('inputForm', function ($scope, $http, $mdDialog) {
+myApp.controller('inputForm', function ($scope, $http, $mdDialog, myService) {
     //旺家其他收入
     var wangjia_other = function () {
         this.order_ID = ""; //交貨單號 (日期四碼+"-"+亂數10碼)
@@ -79,19 +79,19 @@ myApp.controller('inputForm', function ($scope, $http, $mdDialog) {
             }
             else{
                 if (x.ship_datetime == null || x.ship_datetime.length == 0) {
-                    $scope.showAlert(ev, "第" + index + "行錯誤", "請填入正確日期");
+                    myService.showAlert($mdDialog, ev, "第" + index + "行錯誤", "請填入正確日期");
                     $scope.show.SubmitBtn = false;
                     break;
                 } else if(x.contact_info == null || x.contact_info.length == 0) {
-                    $scope.showAlert(ev, "第" + index + "行錯誤", "請填寫客戶名稱");
+                    myService.showAlert($mdDialog, ev, "第" + index + "行錯誤", "請填寫客戶名稱");
                     $scope.show.SubmitBtn = false;
                     break;
                 } else if (x.amount_collect == null || x.amount_collect.length == 0 || x.amount_collect == 0) {
-                    $scope.showAlert(ev, "第" + index + "行價格錯誤", "單價如果為0，請通知工程師修改");
+                    myService.showAlert($mdDialog, ev, "第" + index + "行價格錯誤", "單價如果為0，請通知工程師修改");
                     $scope.show.SubmitBtn = false;
                     break;
                 } else if(x.comment == null || x.comment.length == 0) {
-                    $scope.showAlert(ev, "第" + index + "行備註為空", "特殊收入需填寫備註");
+                    myService.showAlert($mdDialog, ev, "第" + index + "行備註為空", "特殊收入需填寫備註");
                     $scope.show.SubmitBtn = false;
                     break;
                 } else if (x.ship_ID == null || x.ship_ID.length == 0 || x.ship_ID.length != 14) {
@@ -107,18 +107,6 @@ myApp.controller('inputForm', function ($scope, $http, $mdDialog) {
                 index = index + 1;
            }
         }
-    };
-    //Modal版錯誤視窗
-    $scope.showAlert = function (ev, title="", content="", ok = "確認") {
-        $mdDialog.show(
-            $mdDialog.alert()
-                .parent(angular.element(document.body))
-                .clickOutsideToClose(true)
-                .title(title)
-                .textContent(content)
-                .ok(ok)
-                .targetEvent(ev)
-        );
     };
 
 	//送出資料

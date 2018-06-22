@@ -1,5 +1,5 @@
 //MVC的C
-myApp.controller('formCtrl', function($scope,$http,myService) {
+myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 	$scope.drivers = drivers;
 	$scope.orders = [];
 	$scope.sheetsList = [];
@@ -72,7 +72,8 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 	};
 
 	//資料驗證
-    $scope.validateNcal = function(rawdata){
+    $scope.validateNcal = function(ev) {
+		let rawdata = $scope.wangjias;
 		let orderSize = 0;
 		let orderPrice = 0;
 		const currentOrderPrice = $scope.orderPrice; //目前運費總額
@@ -80,19 +81,19 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 		for (let i = 0; i < rawdata.length; i++) {
 			const ship = rawdata[i];
 			if (ship.driver.length == 0) {
-				alert('送貨單號： ' + ship.order_ID + '的司機是空的');
+				myService.showAlert($mdDialog, ev, "第" + (i+1) + "行錯誤", "請選擇配送司機");
 				$scope.oilInfo.rate = $scope.oilInfo.initRate;
 				$scope.orderPrice = currentOrderPrice;
 				$scope.show.SubmitBtn = false;
 				break;
 			} else if (ship.delivery_fee == 0) {
-				alert('送貨單號：' + ship.order_ID + '的運費不正確，請確認內容');
+				myService.showAlert($mdDialog, ev, "第" + (i + 1) + "行錯誤", "運費不應為0，請確認內容");
 				$scope.oilInfo.rate = $scope.oilInfo.initRate;
 				$scope.orderPrice = currentOrderPrice;
 				$scope.show.SubmitBtn = false;
 				break;
 			} else if (ship.good_size > ship.delivery_fee) {
-				alert('送貨單號：' + ship.order_ID + '的運費低於材積數，請確認內容');
+				myService.showAlert($mdDialog, ev, "第" + (i + 1) + "行錯誤", "運費低於材積數，請確認內容");
 				$scope.oilInfo.rate = $scope.oilInfo.initRate;
 				$scope.orderPrice = currentOrderPrice;
 				$scope.show.SubmitBtn = false;
@@ -141,14 +142,16 @@ myApp.controller('formCtrl', function($scope,$http,myService) {
 			submitOrder.delivery_fee = x.delivery_fee;
 			submitOrder.delivery_fee_before_discount = x.delivery_fee_before_discount;
 			submitOrder.comment = x.comment;
-			var submitShip = new ship();
-			submitShip.ship_driver = x.driver;
-			submitShip.ship_ID = x.ship_ID.toString();
-			submitShip.ship_datetime = x.shipdate;
-			submitShip.ship_area = x.ship_area;
-			submitShip.ship_district = x.ship_district;
-			submitShip.contact_info = x.contact_info;
-			submitShips.push(submitShip);
+			for (i = 0; i < x.driver.length; i++) {
+				let submitShip = new ship();
+				submitShip.ship_driver = x.driver[i];
+				submitShip.ship_ID = x.ship_ID.toString();
+				submitShip.ship_datetime = x.shipdate;
+				submitShip.ship_area = x.ship_area;
+				submitShip.ship_district = x.ship_district;
+				submitShip.contact_info = x.contact_info;
+				submitShips.push(submitShip);
+			}
 			submitOrder.ships = submitShips;
 			arrFinalData.push(submitOrder);
 		});
