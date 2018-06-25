@@ -18,7 +18,6 @@ myApp.controller('queryForm', function ($scope, $http, $mdDialog, myService, myF
         myService.getDataFromDB($http, delivery_API,function(response) {
             result.order = response;
             if (JSON.stringify(result.order) == "{}") {
-                hidePleaseWait();
                 myService.showAlert($mdDialog, ev, "查詢不到資料", '請檢查"配送日期"與"出貨單號"');
             } else {
                 rawdata.order_ID = result.order.order_ID;
@@ -48,12 +47,12 @@ myApp.controller('queryForm', function ($scope, $http, $mdDialog, myService, myF
                         myFactory.rawdata = $scope.wangjias;
                         myFactory.show = true;
                     } else {
-                        hidePleaseWait();
                         myService.showAlert($mdDialog, ev, "查詢不到資料", '請檢查"配送日期"與"出貨單號"');
                     }
                 });
             }
         });
+        hidePleaseWait();
     }
     
 });

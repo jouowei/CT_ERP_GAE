@@ -1,5 +1,5 @@
 //MVC的C
-myApp.controller('queryForm', function ($scope, $http, myService, myFactory) {
+myApp.controller('queryForm', function ($scope, $http, $mdDialog, myService, myFactory) {
     $scope.kuo = order;
     $scope.query = function () {
         this.ID = ""
@@ -8,9 +8,10 @@ myApp.controller('queryForm', function ($scope, $http, myService, myFactory) {
         ContentTable: false,
         SubmitBtn: false
     }
-    $scope.queryData = function () {
-        let delivery_API = document.location.origin + "/delivery/" + $scope.query.ID;
+    $scope.queryData = function (ev) {
+        showPleaseWait("請稍後...");
         if (typeof $scope.query.ID == "undefined" || $scope.query.ID.length == 0) {
+            hidePleaseWait();
             return;
         } else {
             myFactory.data = new Object();
@@ -18,16 +19,16 @@ myApp.controller('queryForm', function ($scope, $http, myService, myFactory) {
             myFactory.DataTable = false;
         }
         //用order ID 查詢 order
+        let delivery_API = document.location.origin + "/delivery/" + $scope.query.ID;
         myService.getDataFromDB($http, delivery_API,function(r) {
-            showPleaseWait("請稍後...");
-            let ship_API = document.location.origin + "/shippment/" + $scope.query.ID;
             //空資料
             if (JSON.stringify(r) == "{}") {
                 //用ship ID 查詢 ship
+                let ship_API = document.location.origin + "/shippment/" + $scope.query.ID;
                 myService.getDataFromDB($http, ship_API, function (i) {
                     if (JSON.stringify(i) == "{}" || i.length == 0) {
-                        alert("查詢不到資料! \n請檢查單號是否正確");
                         hidePleaseWait();
+                        myService.showAlert($mdDialog, ev, "查詢不到資料", '請檢查單號是否正確');
                         return;
                     } else {
                         //找到ship_ID，用ship的Order_ID去找Order及ship
@@ -52,8 +53,8 @@ myApp.controller('queryForm', function ($scope, $http, myService, myFactory) {
                                             return;
                                         }
                                     } else {
-                                        alert("查詢不到資料! \n請檢查單號是否正確");
                                         hidePleaseWait();
+                                        myService.showAlert($mdDialog, ev, "查詢不到資料", '請檢查單號是否正確');
                                         return;
                                     }
                                 });
@@ -63,8 +64,9 @@ myApp.controller('queryForm', function ($scope, $http, myService, myFactory) {
                 });
             } else {
                 $scope.kuo = r;
+                let ship_API = document.location.origin + "/shippment/" + $scope.query.ID;
                 myService.getDataFromDB($http, ship_API, function (y) {
-                    if (y.length > 0) {
+                    if (JSON.stringify(y) !== "{}") {
                         $scope.kuo.ships = y;
                         hidePleaseWait();
                     }

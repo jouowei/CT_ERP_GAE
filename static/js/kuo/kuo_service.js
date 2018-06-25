@@ -1,8 +1,11 @@
-var myApp = angular.module('kuo', []);
+var myApp = angular.module('kuo', ['ngMaterial', 'material.svgAssetsCache']);
 
 myApp.service('myService', function () {
     this.getDataFromDB = function ($http, API, callback) {
         return getDataFromDB($http, API, callback);
+    }
+    this.showAlert = function ($mdDialog, ev, title = "", content = "", ok = "確認") {
+        return showAlert($mdDialog, ev, title, content, ok);
     }
 });
 

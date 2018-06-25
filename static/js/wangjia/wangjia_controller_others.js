@@ -76,8 +76,14 @@ myApp.controller('inputForm', function ($scope, $http, $mdDialog, myService) {
             let x = $scope.order.ships[i];
             if(x.ship_deleted == "1"){
                 continue;
-            }
-            else{
+            } else {
+                if (x.ship_ID == null || x.ship_ID.length == 0 || x.ship_ID.length != 14) {
+                    if (index.toString().length < 2) {
+                        x.ship_ID = moment(x.ship_datetime).format('MMDD') + "_" + $scope.order.order_ID.slice(-6) + "_0" + index.toString();
+                    } else if (index.toString().length == 2) {
+                        x.ship_ID = moment(x.ship_datetime).format('MMDD') + "_" + $scope.order.order_ID.slice(-6) + "_" + index.toString();
+                    }
+                }
                 if (x.ship_datetime == null || x.ship_datetime.length == 0) {
                     myService.showAlert($mdDialog, ev, "第" + index + "行錯誤", "請填入正確日期");
                     $scope.show.SubmitBtn = false;
@@ -94,12 +100,6 @@ myApp.controller('inputForm', function ($scope, $http, $mdDialog, myService) {
                     myService.showAlert($mdDialog, ev, "第" + index + "行備註為空", "特殊收入需填寫備註");
                     $scope.show.SubmitBtn = false;
                     break;
-                } else if (x.ship_ID == null || x.ship_ID.length == 0 || x.ship_ID.length != 14) {
-                    if (index.toString().length < 2) {
-                        x.ship_ID = moment(x.ship_datetime).format('MMDD') + "_" + $scope.order.order_ID.slice(-6) + "_0" + index.toString();
-                    } else if (index.toString().length == 2) {
-                        x.ship_ID = moment(x.ship_datetime).format('MMDD') + "_" + $scope.order.order_ID.slice(-6) + "_" + index.toString();
-                    }
                 } else {
                     $scope.order.delivery_fee = $scope.order.delivery_fee + x.amount_collect;
                     $scope.show.SubmitBtn = true;
@@ -122,7 +122,7 @@ myApp.controller('inputForm', function ($scope, $http, $mdDialog, myService) {
             if (ship.ship_deleted !== "1") {
                 let submitShip = new ship_other();
                 submitShip = ship;
-                submitShip.ship_driver = "旺家-庫房";
+                submitShip.ship_driver = "庫房";
                 submitShip.ship_datetime = moment(ship.ship_datetime).format('YYYY-MM-DD');
                 submitShips.push(submitShip);
             }

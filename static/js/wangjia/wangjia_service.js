@@ -15,9 +15,6 @@ myApp.service('myService', function() {
 	this.getDataFromDB = function ($http, API, callback) {
 		return getDataFromDB($http, API, callback);
 	}
-	this.convertOrder2Wangjia = function (order = new order(),ships = new ships()) {
-		return convert_DbData2Wangjia(order, ships);
-	}
 	this.showAlert = function ($mdDialog, ev, title = "", content = "", ok = "確認") {
 		return showAlert($mdDialog, ev, title, content, ok);
 	}
