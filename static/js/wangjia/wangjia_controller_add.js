@@ -87,11 +87,13 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 				$scope.show.SubmitBtn = false;
 				break;
 			} else if (ship.delivery_fee == 0) {
-				myService.showAlert($mdDialog, ev, "第" + (i + 1) + "行錯誤", "運費不應為0，請確認內容");
-				$scope.oilInfo.rate = $scope.oilInfo.initRate;
-				$scope.orderPrice = currentOrderPrice;
-				$scope.show.SubmitBtn = false;
-				break;
+				let confirmAns = confirm("第" + (i + 1) + "行運費為0，請確認是否正確");
+				if (!confirmAns) {
+					$scope.oilInfo.rate = $scope.oilInfo.initRate;
+					$scope.orderPrice = currentOrderPrice;
+					$scope.show.SubmitBtn = false;
+					break;
+				}
 			} else if (ship.good_size > ship.delivery_fee) {
 				myService.showAlert($mdDialog, ev, "第" + (i + 1) + "行錯誤", "運費低於材積數，請確認內容");
 				$scope.oilInfo.rate = $scope.oilInfo.initRate;
