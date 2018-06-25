@@ -113,74 +113,41 @@ function getDataFromDB($http, API = "", callback) {
             });
 }
 
-//改變網頁上各欄位可用性
-function disableUI(boolDisable = false){
-    $('textarea').prop('disabled', boolDisable);
-    $("input[type=button]").prop("disabled", boolDisable);
-    $("input[type=text]").prop("disabled", boolDisable);
-    $("input[type=select]").prop("disabled", boolDisable);
-    $("select").prop("disabled", boolDisable);
+/*
+目的：把不正確的地址格式改成正確的格式
+例：高縣鳳山市 => 高雄市鳳山區
+輸入：地址 
+輸出：正確格式地址
+注意：只有台南高雄屏東可用
+*/
+function getCityAndDistrict(address = "") {
+    var strCity = findObjInArray(["高雄市", "台南市", "高雄縣", "台南縣", "屏東", "屏縣", "高市", "高縣", "南市", "南縣"], address);
+    var strDistrict = "";
+    if (strCity === "屏東") { //屏東縣XX鎮 or XX鄉 or XX市
+        strDistrict = findObjInArray(["鄉", "鎮", "市"], address);
+        strCity += "縣";
+    } else if (strCity === "屏縣") { //屏縣XX鎮 or XX鄉 or XX市
+        strDistrict = findObjInArray(["鄉", "鎮", "市"], address);
+        strCity = "屏東縣";
+    } else if (strCity.indexOf("高雄") > -1 || strCity.indexOf("台南") > -1) { //高雄縣/市 XX鎮 or XX鄉 or XX區
+        strDistrict = findObjInArray(["鄉", "鎮", "區"], address);
+        strCity = strCity.replace("縣", "市");
+    } else if (findObjInArray(["高市", "高縣"], strCity).length > 0) { //高市 XX鎮 or XX鄉 or XX區
+        strDistrict = findObjInArray(["鄉", "鎮", "區"], address);
+        strCity = "高雄市";
+    } else if (findObjInArray(["南市", "南縣"], strCity).length > 0) { //南市 XX鎮 or XX鄉 or XX區
+        strDistrict = findObjInArray(["鄉", "鎮", "區"], address);
+        strCity = "台南市";
+    } else {
+        ///不處理高雄台南屏東以外地區的送貨單
+        return;
+    }
+    if (strDistrict.length > 0) {
+        strDistrict = address.substring(address.indexOf(strCity) + strCity.length, address.indexOf(strDistrict));
+        strDistrict += "區";
+    };
+    return {
+        "city": strCity,
+        "district": strDistrict
+    }
 }
-
-/**
- * Displays overlay with "Please wait" text. Based on bootstrap modal. Contains animated progress bar.
- */
-function showPleaseWait(title="請稍後...") {
-    var modalLoading = '<div class="modal" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false" role="dialog">\
-        <div class="modal-dialog">\
-            <div class="modal-content">\
-                <div class="modal-header">\
-                    <h4 class = "modal-title"> '+title+' </h4>\
-                </div>\
-                <div class="modal-body">\
-                    <div class="progress">\
-                      <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar"\
-                      aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%; height: 40px">\
-                      </div>\
-                    </div>\
-                </div>\
-            </div>\
-        </div>\
-    </div>';
-    $(document.body).append(modalLoading);
-    $("#pleaseWaitDialog").modal("show");
-}
-
-/**
- * Hides "Please wait" overlay. See function showPleaseWait().
- */
-function hidePleaseWait() {
-    $("#pleaseWaitDialog").modal("hide");
-}
-
-//Modal版錯誤視窗
-function showAlert($mdDialog, ev, title = "", content = "", ok = "確認") {
-    $mdDialog.show(
-        $mdDialog.alert()
-        .parent(angular.element(document.body))
-        .clickOutsideToClose(true)
-        .title(title)
-        .textContent(content)
-        .ok(ok)
-        .targetEvent(ev)
-    );
-};
-
-//Modal版確認視窗 (目前有問題)
-function showConfirm($mdDialog, ev, title = "", content = "", ok = "確認", cancel= "取消") {
-    // Appending dialog to document.body to cover sidenav in docs app
-    var confirm = $mdDialog.confirm()
-        .title(title)
-        .textContent(content)
-        .targetEvent(ev)
-        .ok(ok)
-        .cancel(cancel);
-
-    $mdDialog.show(confirm).then(
-        function confirmCallback() {
-            return true;
-        },
-        function cancelCallback() {
-            return false;
-        });
-};

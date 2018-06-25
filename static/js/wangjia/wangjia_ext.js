@@ -31,34 +31,10 @@ function orderBuilder(rawContent){
             dirtydata.shipUnits = parseFloat(data["交貨數量"].toString());
 
             //針對縣市做字串處理
-            var strCity = findObjInArray(["高雄市", "台南市", "高雄縣", "台南縣", "屏東", "屏縣", "高市", "高縣", "南市", "南縣"], data["收貨地址"]);
-            var strDistrict = "";
-            if (strCity === "屏東") {   //屏東縣XX鎮 or XX鄉 or XX市
-                strDistrict = findObjInArray(["鄉", "鎮", "市"], data["收貨地址"]);
-                strCity += "縣";
-                dirtydata.ship_area = strCity;
-            } else if (strCity === "屏縣") { //屏縣XX鎮 or XX鄉 or XX市
-                strDistrict = findObjInArray(["鄉", "鎮", "市"], data["收貨地址"]);
-                dirtydata.ship_area = "屏東縣";
-            } else if (strCity.indexOf("高雄") > -1 || strCity.indexOf("台南") > -1) { //高雄縣/市 XX鎮 or XX鄉 or XX區
-                strDistrict = findObjInArray(["鄉", "鎮", "區"], data["收貨地址"]);
-                dirtydata.ship_area = strCity.replace("縣","市");
-            } else if (findObjInArray(["高市", "高縣"], strCity).length > 0) { //高市 XX鎮 or XX鄉 or XX區
-                strDistrict = findObjInArray(["鄉", "鎮", "區"], data["收貨地址"]);
-                dirtydata.ship_area = "高雄市";
-            } else if (findObjInArray(["南市", "南縣"], strCity).length > 0) { //南市 XX鎮 or XX鄉 or XX區
-                strDistrict = findObjInArray(["鄉", "鎮", "區"], data["收貨地址"]);
-                dirtydata.ship_area = "台南市";
-            } else {
-                ///不處理高雄台南屏東以外地區的送貨單
-                return;
-            }
-            if (strDistrict.length > 0) {
-                dirtydata.ship_district = data["收貨地址"].substring(
-                    data["收貨地址"].indexOf(strCity) + strCity.length, data["收貨地址"].indexOf(strDistrict)
-                );
-                dirtydata.ship_district += "區";
-            };
+            var location = getCityAndDistrict(data["收貨地址"]);
+            dirtydata.ship_area = location.city;
+            dirtydata.ship_district = location.district;
+        
             dirtys.push(dirtydata);	
         }
     });
