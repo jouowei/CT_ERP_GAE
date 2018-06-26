@@ -42,10 +42,10 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 	//傳入sheetname後將資料帶出
 	$scope.parseFiles = function (sheetName, ev) {
 		unparsedData = $scope.workbook.Sheets[sheetName];
-		if (typeof XLSX.utils.sheet_to_json(unparsedData, {header: 1})[0] == "undefined") {
+		if (typeof XLSX.utils.sheet_to_json(unparsedData, {header: 1})[1] == "undefined") {
 				myService.showAlert($mdDialog, ev, "請檢查內容", "資料表"+ sheetName +"為空");
 		} else {
-			showPleaseWait("請稍候...");
+			//showPleaseWait("請稍候...");
 			$scope.wangjias = myService.cleanData(unparsedData);			
 			//把初始運費先倒到 delivery_fee_before_discount
 			let orderPrice = 0;

@@ -10,7 +10,7 @@ function orderBuilder(unparsedData) {
     }
     var rawContent;
     //依照定義的欄位格式轉出標題與內容
-    for (let x = 0; x < 5; x++){
+    for (let x = 0; x < 3; x++){
         const headerNames = XLSX.utils.sheet_to_json(unparsedData, {header: 1})[x];
         if (findArrInArray(add_columnKeys, headerNames)) {
             fileType.add = true;
@@ -191,13 +191,17 @@ function calculate_Price_Size(dirtys = new Array()) {
                         order_price += calTotalPrice(ship.good_size, cleandata.client_type, "dry", ship.ship_area)
                     }
                 });
-            }
-            //排除運費與材積數為0的單據
-            if(order_CBM > 0 && order_price > 0){
-                cleandata.good_size = order_CBM;
-                //計算運費
-                //比對looluptable，不到最低價以最低價計 (此功能未確定前先不加入)
-                cleandata.delivery_fee = order_price;
+                //排除運費與材積數為0的單據
+                if(order_CBM > 0 && order_price > 0){
+                    cleandata.good_size = order_CBM;
+                    //計算運費
+                    //比對looluptable，不到最低價以最低價計 (此功能未確定前先不加入)
+                    cleandata.delivery_fee = order_price;
+                    cleans.push(cleandata);
+                }
+            } else {
+                cleandata.good_size = 0;
+                cleandata.delivery_fee = 0;
                 cleans.push(cleandata);
             }
         } else {
