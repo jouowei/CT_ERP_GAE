@@ -18,7 +18,9 @@ var wangjia = function(){
     this.good_pirce = 0;            //貨物總金額(未稅)
     this.shipUnits = 0;             //交貨數
     this.comment = "";              //備註
-    ////新增資料查詢用變數
+    this.ship_comment = "";         //備註
+    this.data_type = "";            //單據類型
+    ////新增資料查詢比對用(order初始值)
     this.initOrder = {
         order_ID: "",
         ship_ID: "",
@@ -57,9 +59,7 @@ var ship = function(){
 };
 
 //旺家用(飲料關鍵字)
-const wangjiaDrinkKeyword = [
-    "吸吸冰", "形動", "梅酒", "每日完勝", "吸C凍", "旺仔牛奶",
-    "果粒多", "深層水", "水飲", "飲料", "果汁"];
+const wangjiaDrinkKeyword = ["吸吸冰", "形動", "梅酒", "每日完勝", "吸C凍", "旺仔牛奶","果粒多", "深層水", "水飲", "飲料", "果汁"];
 
 //旺家用(客戶類型)  
 ///還需確認定義
@@ -75,7 +75,7 @@ const wangjia_clienttype = [
     { id:9, keyword: "大潤發",type: "warehouse" },
     { id:10, keyword: "戒治所",type: "prison" },
     { id:11, keyword: "監獄",type: "prison" }
-    //統倉與CVS定義
+    //統倉與CVS定義未定
 ];
 
 //油價浮動公式
@@ -112,6 +112,7 @@ const wangjia_shipfee = [
     { shipto: "屏東縣", type: "prison", cargo: "liquid", unit:"10kg", unitprice: 8, minimumPirce: 350, minimumUnit: 34},
     { shipto: "屏東縣", type: "other", cargo: "dry", unit:"CBM", unitprice: 7.5, minimumPirce: 200, minimumUnit: 22}, 
     { shipto: "屏東縣", type: "other", cargo: "liquid", unit:"10kg", unitprice: 8, minimumPirce: 200, minimumUnit: 22},
+    { shipto: "", type: "return", cargo: "", unit:"", unitprice: 7.5*0.7,  minimumPirce: 0, minimumUnit: 0},
     { shipto: "special", type: "weekend", cargo: "", unit:"person", unitprice: 1000}, 
     { shipto: "special", type: "CNY", cargo: "", unit:"person", unitprice: 2000}
     //其他地區?
@@ -185,14 +186,26 @@ const wangjia_beverage_lookup = [
     { id: "308105000350", name: "雪姬梅酒禮盒", weightPerUnit: 1.300, volumePerUnit: 1.011, shipPrice: 10.40, reverseShipPrice: 7.28 }
     ];
 
-const columnKeys = [
+//新增配送
+const add_columnKeys = [
     "銷售單/調撥單號", "交貨單號", "交貨日期", "交貨單建立日期", "收貨人名稱", "收貨地址",
     "物料", "單品項才數", "交貨數量", "金額(未稅)"];
 
+//一般退貨
+const return_columnKeys = [
+    "訂單號碼", "交貨單號碼", "發貨過帳日期", "需求日期", "收貨人名稱", "儲存地點描述",
+    "物料名稱", "物料代碼", "發貨過帳數量", "發貨過帳金額", "交易類型", "訂貨原因", "銷售備註"];
+
+//軍公教退貨
+const return_PXmart_columnKeys = [
+    "調撥單號", "交貨單號", "發貨過帳日期", "需求日期", "客戶名稱",
+    "物料名稱", "物料代碼", "發貨過帳數量", "發貨過帳金額", "交易類型", "調撥單表頭內文"];
+
+//手開單類型
 const manualItems = [
    {id: 1, name:"退貨整理費", unitprice:150, unit: "板"},
    {id: 2, name:"膠膜費", unitprice:250, unit: "才"},
    {id: 3, name:"紙箱",unitprice:7.5, unit: "才"}, 
    {id: 4, name:"棧板",unitprice:0, unit: "板"}, 
    {id: 5, name:"堆高機",unitprice:0, unit: "次"}
-]
+];

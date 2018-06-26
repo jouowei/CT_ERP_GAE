@@ -58,7 +58,7 @@
                 <input type="button" class="btn btn-lg btn-secondary" value="{{sheetsList}}" 
                     ng-repeat="sheetsList in sheetsList" 
                     ng-model="sheetsList"
-                    ng-click="parseFiles(sheetsList)" 
+                    ng-click="parseFiles(sheetsList,$event)" 
                     style="margin:2px;"> </input>
             </div>
         </div>
@@ -96,7 +96,7 @@
                                 </select>
                             </td>
                             <td>
-                                <textarea type="text" class="form-control" rows="4" 
+                                <textarea type="text" class="form-control" rows="3" 
                                     ng-list="&#10;" 
                                     ng-model="ship.driver" 
                                     style="width:97px;" 
@@ -112,13 +112,19 @@
                                 {{ship.contact_info}}<br> 
                             </td>
                             <td>
-                                <textarea type="text" class="form-control" rows="2" style="width:144px;" ng-list="&#10;" ng-model="ship.ship_ID" readonly></textarea>
+                                <textarea type="text" class="form-control" rows="3" style="width:144px;" ng-list="&#10;" ng-model="ship.ship_ID" readonly></textarea>
                             </td>
                             <td>
-                                {{ ship.good_size.toFixed(4) }}
+                                <input type="text" class="form-control" style="width:75px;" 
+                                value="{{ ship.good_size.toFixed(4) }}" 
+                                ng-disabled="{{ ship.data_type=='銷貨' }}" 
+                                ng-model="ship.good_size" 
+                                ng-change="updatePrice($index)" 
+                                placeholder="材積" 
+                                required/>                               
                             </td>
-                            <td>
-                                {{ ship.delivery_fee.toFixed(2)  }}
+                            <td> 
+                                <input type="text" class="form-control" style="width:75px;" value="{{ ship.delivery_fee }}" ng-model="ship.delivery_fee" disabled/>                               
                             </td>
                         </tr>
                         <tr>
@@ -135,7 +141,7 @@
                             </td>
                             <td>總材積：
                                 <input type="button" class="btn btn-lg btn-light form-control"  
-                                value="{{orderSize | number:2 }}" ng-model="orderSize" readonly/>
+                                value="{{orderSize | number:0 }}" ng-model="orderSize" readonly/>
                             </td>
                             <td>本周柴油：
                                 <div>

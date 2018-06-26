@@ -5,7 +5,7 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 	$scope.sheetsList = [];
 	$scope.workbook;
 	$scope.dieselPriceToday = "";
-	$scope.show = { TabPicker: false, DataTable: false, SubmitBtn: false };
+	$scope.show = { TabPicker: false, DataTable: false, SubmitBtn: false};
 	$scope.getSheetName = function () {
 		$scope.oilInfo = myService.getDieselDiscount($http, document.location.origin + "/diselprice");
 		$scope.show.SubmitBtn = false;
@@ -40,36 +40,44 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 	};
 
 	//傳入sheetname後將資料帶出
-	$scope.parseFiles = function (sheetName) { 
-		var headerNames = XLSX.utils.sheet_to_json($scope.workbook.Sheets[sheetName], {
-			header: 1
-		})[1];
-		var dataParsed = XLSX.utils.sheet_to_json($scope.workbook.Sheets[sheetName], {
-			header: headerNames
-		});
-		//移除標頭
-		dataParsed.splice(0, 2);
-		$scope.wangjias = myService.cleanData(dataParsed);
-		//把初始運費先倒到 delivery_fee_before_discount
-		let orderPrice = 0;
-		let orderSize = 0;
-		for (i = 0; i < $scope.wangjias.length; i++) {
-			/*
-			delivery_fee_before_discount -> 最初的油價係數 * 最初算出來的運費
-			delivery_fee -> 手動修改油價係數，調整後的運費 (一開始兩者相同)
-			*/
-			$scope.oilInfo.rate = $scope.oilInfo.initRate;
-			let initFee = parseInt(parseInt($scope.wangjias[i].delivery_fee) * parseFloat($scope.oilInfo.initRate));
-			$scope.wangjias[i].delivery_fee_before_discount = initFee;
-			$scope.wangjias[i].delivery_fee = initFee;
-			orderSize += parseFloat($scope.wangjias[i].good_size);
-			orderPrice += parseInt($scope.wangjias[i].delivery_fee);
-		};
-		$scope.show.DataTable = true;
-		$scope.orderSize = orderSize;	//整張表的總材積數
-		$scope.orderPrice = orderPrice; //整張表的總額
-		$scope.before_intOrderPrice = orderPrice; //初始運費總額
+	$scope.parseFiles = function (sheetName, ev) {
+		unparsedData = $scope.workbook.Sheets[sheetName];
+		if (typeof XLSX.utils.sheet_to_json(unparsedData, {header: 1})[0] == "undefined") {
+				myService.showAlert($mdDialog, ev, "請檢查內容", "資料表"+ sheetName +"為空");
+		} else {
+			showPleaseWait("請稍候...");
+			$scope.wangjias = myService.cleanData(unparsedData);			
+			//把初始運費先倒到 delivery_fee_before_discount
+			let orderPrice = 0;
+			let orderSize = 0;
+			if ($scope.wangjias.length > 0){
+				for (i = 0; i < $scope.wangjias.length; i++) {
+					/*
+					delivery_fee_before_discount -> 最初的油價係數 * 最初算出來的運費
+					delivery_fee -> 手動修改油價係數，調整後的運費 (一開始兩者相同)
+					*/
+					$scope.oilInfo.rate = $scope.oilInfo.initRate;
+					let initFee = parseInt(parseFloat($scope.wangjias[i].delivery_fee) * parseFloat($scope.oilInfo.initRate));
+					$scope.wangjias[i].delivery_fee_before_discount = initFee;
+					$scope.wangjias[i].delivery_fee = initFee;
+					orderSize += parseFloat($scope.wangjias[i].good_size);
+					orderPrice += parseFloat($scope.wangjias[i].delivery_fee);
+				};
+				$scope.show.DataTable = true;
+				$scope.orderSize = parseInt(orderSize);	//整張表的總材積數
+				$scope.orderPrice = parseInt(orderPrice); //整張表的總額
+				$scope.before_intOrderPrice = orderPrice; //初始運費總額
+			} else {
+				myService.showAlert($mdDialog, ev, "資料錯誤", "格式不正確或檔案為空");
+			}
+			hidePleaseWait();
+		}
 	};
+
+    //輸入材積數後的運費計算 (目前因為各種設定價格無差異，先使用"高雄市""乾貨""其他通路"的價格設定)
+    $scope.updatePrice = function (index) {
+		$scope.wangjias[index].delivery_fee = myService.calTotalPrice($scope.wangjias[index].good_size,"return","","");
+    };
 
 	//資料驗證
     $scope.validateNcal = function(ev) {
@@ -77,6 +85,7 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 		let orderSize = 0;
 		let orderPrice = 0;
 		const currentOrderPrice = $scope.orderPrice; //目前運費總額
+		const currentOrderSize = $scope.orderSize; //目前材積數總額
 		const currentOilRate = $scope.oilInfo.rate; //目前油價係數
 		for (let i = 0; i < rawdata.length; i++) {
 			const ship = rawdata[i];
@@ -101,28 +110,39 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 				$scope.show.SubmitBtn = false;
 				break;
 			}
-			//重新計算運費(原始運費 / 原始油價係數 * 新油價係數)
-			ship.delivery_fee = parseInt(ship.delivery_fee_before_discount) / parseFloat($scope.oilInfo.initRate) * parseFloat($scope.oilInfo.rate);
+			if(ship.data_type == "銷貨"){
+				//重新計算運費(原始運費 / 原始油價係數 * 新油價係數)
+				ship.delivery_fee = parseFloat(ship.delivery_fee_before_discount) / parseFloat($scope.oilInfo.initRate) * parseFloat($scope.oilInfo.rate);
+			} else if (ship.data_type == "退貨"){
+				ship.delivery_fee = parseFloat(ship.delivery_fee) / parseFloat($scope.oilInfo.initRate) * parseFloat($scope.oilInfo.rate);
+			}
 			//調整後的total運費
 			orderPrice += parseInt(ship.delivery_fee); 
+			orderSize += parseInt(ship.good_size); 
 			$scope.show.SubmitBtn = true;
 		}
 		if ($scope.show.SubmitBtn) {
-			if (orderPrice != currentOrderPrice) {
-				let confirmAns = confirm("請確認是否更改運費： \n 調整前：" + currentOrderPrice +
-					"\n 調整後：" + orderPrice);
+			if (parseInt(orderSize) != currentOrderSize) {
+				let confirmAns = confirm("請確認總材積數：\n 調整前：" + currentOrderSize +
+					"\n 調整後：" + parseInt(orderSize));
 				if (confirmAns) {
-					$scope.orderPrice = orderPrice;
-					$scope.show.SubmitBtn = true;
+					$scope.orderSize = parseInt(orderSize);
+				} else {
+					$scope.orderPrice = currentOrderPrice;
+					$scope.show.SubmitBtn = false;
+				}
+			};
+			if (parseInt(orderPrice) != currentOrderPrice) {
+				let confirmAns = confirm("請確認總運費金額： \n 調整前：" + currentOrderPrice +
+					"\n 調整後：" + parseInt(orderPrice));
+				if (confirmAns) {
+					$scope.orderPrice = parseInt(orderPrice);
 					return;
 				} else {
 					$scope.orderPrice = currentOrderPrice;
 					$scope.show.SubmitBtn = false;
 					return;
 				}
-			} else {
-				$scope.show.SubmitBtn = true;
-				return;
 			};
 		};
 	}; 
@@ -160,7 +180,7 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 		if ($scope.show.SubmitBtn){
 			//POST request
 			disableUI(true);
-			showPleaseWait("請稍候，資料儲存中...");
+			showPleaseWait("請稍候...");
 
 			//var SUBMIT_ORDER_API = "https://jt-erp.appspot.com/order";
 			//var SUBMIT_ORDER_API = "https://ct-erp.appspot.com/order";

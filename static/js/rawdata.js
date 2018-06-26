@@ -41,6 +41,18 @@ function findObjInArray(arr, target) {
     return result;
 }
 
+//用來判斷arr裡面是否完全包含target的Array
+//傳入(被搜尋的array與string 目標)
+function findArrInArray(arr1, arr2) {
+    for (var i = 0; i < arr1.length; i++) {
+        if ($.inArray(arr1[i], arr2) == -1){
+            return false;
+        } else{
+            return true;
+        }
+    }
+}
+
 //google認證登入用
 function onSignIn(googleUser) {
     var profile = googleUser.getBasicProfile();
