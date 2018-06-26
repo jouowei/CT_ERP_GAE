@@ -9,6 +9,7 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 	$scope.getSheetName = function () {
 		$scope.oilInfo = myService.getDieselDiscount($http, document.location.origin + "/diselprice");
 		$scope.show.SubmitBtn = false;
+		$scope.show.DataTable = false;
 		dataParsed = new Array();
 		var files = $('#files')[0].files;
 		if (files.length > 0){
@@ -41,6 +42,8 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 
 	//傳入sheetname後將資料帶出
 	$scope.parseFiles = function (sheetName, ev) {
+		$scope.show.SubmitBtn = false;
+		$scope.show.DataTable = false;
 		unparsedData = $scope.workbook.Sheets[sheetName];
 		if (typeof XLSX.utils.sheet_to_json(unparsedData, {header: 1})[1] == "undefined") {
 				myService.showAlert($mdDialog, ev, "請檢查內容", "資料表"+ sheetName +"為空");

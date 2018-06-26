@@ -10,7 +10,7 @@ function orderBuilder(unparsedData) {
     }
     var rawContent;
     //依照定義的欄位格式轉出標題與內容
-    for (let x = 0; x < 3; x++){
+    for (let x = 0; x < 2; x++){
         const headerNames = XLSX.utils.sheet_to_json(unparsedData, {header: 1})[x];
         if (findArrInArray(add_columnKeys, headerNames)) {
             fileType.add = true;
@@ -83,7 +83,13 @@ function orderBuilder(unparsedData) {
                 dirtydata.itemName = data["物料名稱"].toString();
                 dirtydata.good_pirce = data["發貨過帳金額"].toString();
                 dirtydata.shipUnits = parseFloat(data["發貨過帳數量"].toString());
-                dirtydata.comment = data["訂貨原因"].toString() + "/n" + data["銷售備註"].toString();
+                if (typeof data["訂貨原因"] == "undefined") {
+                    dirtydata.comment = data["銷售備註"].toString();
+                } else if (typeof data["銷售備註"] == "undefined") {
+                    dirtydata.comment = data["訂貨原因"].toString();
+                } else {
+                    dirtydata.comment = data["訂貨原因"].toString() + "\r\n" + data["銷售備註"].toString();
+                }
                 //目前採用統一價，以後分區域時，需要要求旺家提供客戶地址，以計算金額
                 dirtydata.ship_area = "高雄市";
                 dirtydata.data_type = "退貨";
