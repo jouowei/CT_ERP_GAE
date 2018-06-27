@@ -186,21 +186,6 @@ const wangjia_beverage_lookup = [
     { id: "308105000350", name: "雪姬梅酒禮盒", weightPerUnit: 1.300, volumePerUnit: 1.011, shipPrice: 10.40, reverseShipPrice: 7.28 }
     ];
 
-//新增配送
-const add_columnKeys = [
-    "銷售單/調撥單號", "交貨單號", "交貨日期", "交貨單建立日期", "收貨人名稱", "收貨地址",
-    "物料", "單品項才數", "交貨數量", "金額(未稅)"];
-
-//一般退貨
-const return_columnKeys = [
-    "訂單號碼", "交貨單號碼", "發貨過帳日期", "需求日期", "收貨人名稱", "儲存地點描述",
-    "物料名稱", "物料代碼", "發貨過帳數量", "發貨過帳金額", "交易類型", "訂貨原因", "銷售備註"];
-
-//軍公教退貨
-const return_PXmart_columnKeys = [
-    "調撥單號", "交貨單號", "發貨過帳日期", "需求日期", "客戶名稱",
-    "物料名稱", "物料代碼", "發貨過帳數量", "發貨過帳金額", "交易類型", "調撥單表頭內文"];
-
 //手開單類型
 const manualItems = [
    {id: 1, name:"退貨整理費", unitprice:150, unit: "板"},
