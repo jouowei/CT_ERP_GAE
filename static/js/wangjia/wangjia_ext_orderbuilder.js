@@ -21,7 +21,7 @@ const return_PXmart_columnKeys = [
     "物料名稱", "物料代碼", "發貨過帳數量", "發貨過帳金額", "交易類型", "調撥單表頭內文"
 ];
 
-//Excel資料處理
+//Excel資料處理，轉為wangjia格式供之後的操作
 function orderBuilder(unparsedData) {
     //檢查是不是配送單格式
     let fileType = {
