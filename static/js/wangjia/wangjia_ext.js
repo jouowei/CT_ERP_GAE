@@ -143,3 +143,34 @@ function getDieselDiscount ($http,API = "") {
     }
     return result;
 }
+
+function handleDataToWangjia(response, ev, $http, $mdDialog) {
+    let rawdata = new wangjia();
+    rawdata.order_ID = response.order_ID;
+    rawdata.clientname = response.clientname;
+    rawdata.delivery_date = response.delivery_date;
+    rawdata.delivery_fee = response.delivery_fee;
+    rawdata.good_size = response.good_size;
+    rawdata.comment = response.comment;
+    rawdata.initOrder = {
+        order_ID: response.order_ID,
+        ship_ID: "",
+        delivery_fee: response.delivery_fee,
+        good_size: response.good_size,
+        comment: response.comment
+    }
+    let ship_API = document.location.origin + "/shippment/" + response.order_ID;
+    getDataFromDB($http, ship_API, function (ships) {
+        if (JSON.stringify(ships) !== "{}" || JSON.stringify(response) == "[]") {
+            let drivers = new Array();
+            for (i = 0; i < ships.length; i++) {
+                drivers.push(ships[i].driver);
+                rawdata.ship_ID.push(ships[i].ship_ID);
+            }
+            rawdata.driver = drivers;
+        } else {
+            showAlert($mdDialog, ev, "查詢不到資料", '請檢查"配送日期"與"出貨單號"');
+        }
+    });
+    return rawdata;
+}

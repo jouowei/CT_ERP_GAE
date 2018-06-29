@@ -18,6 +18,9 @@ myApp.service('myService', function() {
 	this.calTotalPrice = function(unit, clientType, cargo, area) {
 		return calTotalPrice(unit, clientType, cargo, area);
 	}
+	this.handleDataToWangjia = function (response,ev, $http, $mdDialog) {
+		return handleDataToWangjia(response,ev, $http, $mdDialog);
+	}
 });
 
 myApp.factory("myFactory", function () {

@@ -16,40 +16,26 @@ myApp.controller('queryForm', function ($scope, $http, $mdDialog, myService, myF
         $scope.wangjias = new Array();
         showPleaseWait("請稍候...");
         myService.getDataFromDB($http, delivery_API,function(response) {
-            result.order = response;
-            if (JSON.stringify(result.order) == "{}") {
-                myService.showAlert($mdDialog, ev, "查詢不到資料", '請檢查"配送日期"與"出貨單號"');
-            } else {
-                rawdata.order_ID = result.order.order_ID;
-                rawdata.clientname = result.order.clientname;
-                rawdata.delivery_date = result.order.delivery_date;
-                rawdata.delivery_fee = result.order.delivery_fee;
-                rawdata.good_size = result.order.good_size;
-                rawdata.comment = result.order.comment;
-                rawdata.initOrder = {
-                    order_ID: result.order.order_ID,
-                    ship_ID: "",
-                    delivery_fee: result.order.delivery_fee,
-                    good_size: result.order.good_size,
-                    comment: result.order.comment
-                }
+            if (JSON.stringify(response) == "{}" || JSON.stringify(response) == "[]") {
                 myService.getDataFromDB($http, ship_API, function (response) {
-                    result.ships = response;
-                    if (result.ships.length > 0) {
-                        let drivers = new Array();
-                        for(i=0;i<result.ships.length;i++){
-                            drivers.push(result.ships[i].driver);
-                            rawdata.ship_ID = result.ships[i].ship_ID;
-                        }
-                        rawdata.driver = drivers;
-                        $scope.wangjias.push(rawdata);
-                        myFactory.data = $scope.wangjias;
-                        myFactory.rawdata = $scope.wangjias;
-                        myFactory.show = true;
-                    } else {
+                    if (JSON.stringify(response) == "{}" || JSON.stringify(response) == "[]") {
                         myService.showAlert($mdDialog, ev, "查詢不到資料", '請檢查"配送日期"與"出貨單號"');
+                    } else {
+                        let delivery_API_2 = document.location.origin + "/delivery/" + response[0].order_ID;
+                        myService.getDataFromDB($http, delivery_API_2, function (response) {
+                            if (JSON.stringify(response) !== "{}" || JSON.stringify(response) == "[]") {
+                                rawdata = myService.handleDataToWangjia(response,ev, $http, $mdDialog);
+                            }
+                        });
                     }
+
                 });
+            } else {
+                rawdata = myService.handleDataToWangjia(response,ev, $http, $mdDialog);
+                $scope.wangjias.push(rawdata);
+                myFactory.data = $scope.wangjias;
+                myFactory.rawdata = $scope.wangjias;
+                myFactory.show = true;
             }
         });
         hidePleaseWait();
