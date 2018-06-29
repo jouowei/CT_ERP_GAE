@@ -15,7 +15,7 @@ class Delivery(db.Model):
     index = db.Column(db.Integer, primary_key=True, autoincrement=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
-    businesstype = db.Column(db.String(255), nullable=True)
+    business_type = db.Column(db.String(255), nullable=True)
     clientname = db.Column(db.String(225), nullable=True)
     delivery_date =  db.Column(db.Date, nullable=True)
     delivery_fee =  db.Column(db.String(225), nullable=True)
@@ -28,8 +28,8 @@ class Delivery(db.Model):
     comment = db.Column(db.Text, nullable=True)
     updateduser = db.Column(db.String(225), nullable=True) 
     
-    def __init__(self, businesstype, order_ID, clientname="", delivery_date="", delivery_fee="", delivery_fee_before_discount="", good_size="", ship_units="", comment="", updateduser=""):
-        self.businesstype = businesstype
+    def __init__(self, business_type, order_ID, clientname="", delivery_date="", delivery_fee="", delivery_fee_before_discount="", good_size="", ship_units="", comment="", updateduser=""):
+        self.business_type = business_type
         self.clientname = clientname
         self.order_ID = order_ID
         self.delivery_date = delivery_date
@@ -43,7 +43,7 @@ class Delivery(db.Model):
 class DeliverySchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('timestamp', 'updated_at', 'businesstype', 'clientname', 'order_ID', 'delivery_date',
+        fields = ('timestamp', 'updated_at', 'business_type', 'clientname', 'order_ID', 'delivery_date',
                   'delivery_fee', 'delivery_fee_before_discount', 'good_size','ship_units', 'comment', 'updateduser')
 
 class Shippment(db.Model):
@@ -103,14 +103,14 @@ class OperateLog(db.Model):
     index = db.Column(db.Integer, primary_key=True, autoincrement=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
-    businesstype = db.Column(db.String(255), nullable=True)
+    business_type = db.Column(db.String(255), nullable=True)
     function = db.Column(db.String(255), nullable=True)
     order_ID = db.Column(db.String(18), nullable=True)
     ship_ID = db.Column(db.String(255), nullable=True)
     user_ID = db.Column(db.String(225), nullable=True)
 
-    def __init__(self, businesstype, function, order_ID, ship_ID, user_ID):
-        self.businesstype = businesstype
+    def __init__(self, business_type, function, order_ID, ship_ID, user_ID):
+        self.business_type = business_type
         self.function = function
         self.order_ID = order_ID
         self.ship_ID = ship_ID
@@ -119,5 +119,5 @@ class OperateLog(db.Model):
 class OperateLogSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('timestamp', 'updated_at', 'businesstype','function'
+        fields = ('timestamp', 'updated_at', 'business_type', 'function'
                   'order_ID', 'ship_ID', 'userID')
