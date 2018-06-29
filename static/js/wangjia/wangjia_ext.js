@@ -132,28 +132,14 @@ function getDieselDiscount ($http,API = "") {
         initRate: "",   //油價係數 (未調整)
         rate: ""        //油價係數 (調整後)
     };
-    $http({
-            method: 'GET',
-            url: API
-        })
-        .then(function (response) {
-            if (response.status === 200) {
-                let dieselPriceToday = parseInt(response.data);
-                for (i = 0; i < wangjia_dieselDiscount.length; i++) {
-                    if (wangjia_dieselDiscount[i].maxDieselPrice >= parseInt(response.data)) {
-                        let discountRate = wangjia_dieselDiscount[i].discount;
-                        result.rate = discountRate;
-                        result.initRate = discountRate;
-                        result.price = dieselPriceToday;
-                        break;
-                    }
-                }
-            } else {
-                throw '油價資料來源出錯 \n' + response.data;
-            }
-        },
-        function errorCallback(response) {
-            alert('油價伺服器錯誤 \n' + response.data);
-        });
+    result.price = getDieselPriceToday($http,API);
+    for (i = 0; i < wangjia_dieselDiscount.length; i++) {
+        if (wangjia_dieselDiscount[i].maxDieselPrice >= parseInt(result.price)) {
+            let discountRate = wangjia_dieselDiscount[i].discount;
+            result.rate = discountRate;
+            result.initRate = discountRate;
+            break;
+        }
+    }
     return result;
 }

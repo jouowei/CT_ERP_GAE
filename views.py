@@ -62,38 +62,39 @@ def checkKey(data,key):
 def add_order(rawdata):
     arrShippment = []
     if len(checkKey(rawdata,'order_ID')) > 0:
-        order_ID = checkKey(rawdata,'order_ID')
+        order_ID = checkKey(rawdata,'order_ID')         #訂單編號
     else:
         return 'Error: unfound key "order_ID"'
-    clientname = checkKey(rawdata,'clientname')
-    business_type = checkKey(rawdata,'business_type')
-    delivery_date = checkKey(rawdata,'delivery_date')
-    delivery_fee = checkKey(rawdata,'delivery_fee')
+    clientname = checkKey(rawdata,'clientname')         #客戶名稱
+    business_type = checkKey(rawdata,'business_type')   #表單類型
+    delivery_date = checkKey(rawdata,'delivery_date')   #配送日期
+    delivery_fee = checkKey(rawdata,'delivery_fee')     #總運費
     delivery_fee_before_discount = checkKey(rawdata,'delivery_fee_before_discount')
-    car_type = checkKey(rawdata,'car_type')
-    car_ID = checkKey(rawdata,'car_ID')
-    good_size = checkKey(rawdata,'good_size')
-    comment = checkKey(rawdata,'comment')
-    ships = checkKey(rawdata,'ships')
-    updateduser = checkKey(rawdata, 'updateduser')
+    car_type = checkKey(rawdata,'car_type')             #車型
+    car_ID = checkKey(rawdata,'car_ID')                 #車號
+    good_size = checkKey(rawdata,'good_size')           #總材積數
+    ship_units = checkKey(rawdata,'ship_units')         #配送件數
+    comment = checkKey(rawdata,'comment')               #訂單備註
+    ships = checkKey(rawdata,'ships')                   #訂單的配送紀錄
+    updateduser = checkKey(rawdata, 'updateduser')      #使用者ID
     # 建立Shippments
     for ship in ships:
         if len(checkKey(ship,'ship_ID')) > 0 :
-            ship_ID = checkKey(ship,'ship_ID')
+            ship_ID = checkKey(ship,'ship_ID')          #配送單編號
         else:
             return 'Error: unfound key "ship_ID"'
-        contact_info = checkKey(ship,'contact_info')
-        ship_orderStore = checkKey(ship,'ship_orderStore')
-        ship_datetime = checkKey(ship,'ship_datetime')
-        ship_area = checkKey(ship,'ship_area')
-        ship_district = checkKey(ship,'ship_district')
-        driver = checkKey(ship,'ship_driver')
-        is_elevator = checkKey(ship,'is_elevator')
-        floors_byhand = checkKey(ship, 'floors_byhand')
-        paytype = checkKey(ship, 'paytype')
-        amount_collect = checkKey(ship,'amount_collect')
-        ship_comment = checkKey(ship,'comment')
-        shipUnits = checkKey(ship, 'shipUnits')
+        contact_info = checkKey(ship,'contact_info')    #客戶姓名/地址/電話
+        ship_orderStore = checkKey(ship,'ship_orderStore') #(郭元益)發單店面
+        ship_datetime = checkKey(ship,'ship_datetime')  #配送時間
+        ship_area = checkKey(ship,'ship_area')          #配送縣市
+        ship_district = checkKey(ship,'ship_district')  #配送區域
+        driver = checkKey(ship,'ship_driver')           #司機
+        is_elevator = checkKey(ship,'is_elevator')      #(郭元益)是否電梯
+        floors_byhand = checkKey(ship, 'floors_byhand') #(郭元益)手搬樓層數
+        paytype = checkKey(ship, 'paytype')             #(郭元益)付款方式_現金/支票
+        amount_collect = checkKey(ship,'amount_collect')#(郭元益)代收款 (旺家)手開單費用
+        ship_comment = checkKey(ship,'comment')         #配送單備註
+        shipUnits = checkKey(ship, 'shipUnits')         #(旺家)手開單數量
         result_ship = Shippment.query.with_for_update().filter_by(ship_ID=ship_ID,driver=driver).first()
             # 取消檢查ship_ID是否重複，但是以下廠商在傳入時，須確保ship_ID是唯一的:
             #   1.郭元益
@@ -105,7 +106,7 @@ def add_order(rawdata):
     # 資料庫沒有此Order => 新增Order
     if result_delivery is None:
         new_delivery = Delivery(business_type, order_ID, clientname, delivery_date,
-                                delivery_fee, delivery_fee_before_discount, good_size, comment, updateduser)
+                                delivery_fee, delivery_fee_before_discount, good_size, ship_units, comment, updateduser)
         try:
             db.session.add(new_delivery)
             db.session.commit()
@@ -196,6 +197,11 @@ def delivery_update(id):
         try:
             good_size = request.json['good_size']
             delivery.good_size = good_size
+        except:
+            pass
+        try:
+            ship_units = request.json['ship_units']
+            delivery.ship_units = ship_units
         except:
             pass
         try:

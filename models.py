@@ -21,13 +21,14 @@ class Delivery(db.Model):
     delivery_fee =  db.Column(db.String(225), nullable=True)
     delivery_fee_before_discount = db.Column(db.String(225), nullable=True)
     good_size =  db.Column(db.String(225), nullable=True)
+    ship_units = db.Column(db.String(225), nullable=True)
     # a unique id number for future use
-    order_ID = db.Column(db.String(15), unique=True, nullable=True)
+    order_ID = db.Column(db.String(18), unique=True, nullable=True)
     ship_ID = db.relationship('Shippment', backref='Delivery',lazy='dynamic')
     comment = db.Column(db.Text, nullable=True)
     updateduser = db.Column(db.String(225), nullable=True) 
     
-    def __init__(self, businesstype, order_ID, clientname="", delivery_date="", delivery_fee="", delivery_fee_before_discount="", good_size="", comment="", updateduser=""):
+    def __init__(self, businesstype, order_ID, clientname="", delivery_date="", delivery_fee="", delivery_fee_before_discount="", good_size="", ship_units="", comment="", updateduser=""):
         self.businesstype = businesstype
         self.clientname = clientname
         self.order_ID = order_ID
@@ -35,6 +36,7 @@ class Delivery(db.Model):
         self.delivery_fee = delivery_fee
         self.delivery_fee_before_discount = delivery_fee_before_discount
         self.good_size = good_size
+        self.ship_units = ship_units
         self.comment = comment
         self.updateduser = updateduser
 
@@ -42,7 +44,7 @@ class DeliverySchema(ma.Schema):
     class Meta:
         # Fields to expose
         fields = ('timestamp', 'updated_at', 'businesstype', 'clientname', 'order_ID', 'delivery_date',
-                  'delivery_fee', 'delivery_fee_before_discount', 'good_size', 'comment', 'updateduser')
+                  'delivery_fee', 'delivery_fee_before_discount', 'good_size','ship_units', 'comment', 'updateduser')
 
 class Shippment(db.Model):
     """
@@ -53,7 +55,7 @@ class Shippment(db.Model):
 
     index = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ship_ID = db.Column(db.String(255))
-    order_ID = db.Column(db.String(15), nullable=True)
+    order_ID = db.Column(db.String(18), nullable=True)
     to_order_ID = db.Column(db.Integer, db.ForeignKey('delivery_order.index'), nullable=True)
     contact_info = db.Column(db.String(255), nullable=True)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -103,7 +105,7 @@ class OperateLog(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
     businesstype = db.Column(db.String(255), nullable=True)
     function = db.Column(db.String(255), nullable=True)
-    order_ID = db.Column(db.String(15), nullable=True)
+    order_ID = db.Column(db.String(18), nullable=True)
     ship_ID = db.Column(db.String(255), nullable=True)
     user_ID = db.Column(db.String(225), nullable=True)
 

@@ -1,13 +1,10 @@
-var myApp = angular.module('wangjia',['ngMaterial', 'material.svgAssetsCache']);
+var myApp = angular.module('huayuan', ['ngMaterial', 'material.svgAssetsCache']);
 
 //MVC的M
 myApp.service('myService', function() {
 
 	this.cleanData = function(unparsedData) {
 		return orderBuilder(unparsedData);
-	}
-	this.getDieselDiscount = function ($http,API) {
-		return getDieselDiscount($http, API);
 	}
 	this.getDataFromDB = function ($http, API, callback) {
 		return getDataFromDB($http, API, callback);

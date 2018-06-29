@@ -24,23 +24,22 @@
     <script type="text/javascript" src="/js/navbar.js"></script>
     <script type="text/javascript" src="/js/display.js"></script>
 	<script type="text/javascript" src="/js/jslib/moment.min.js"></script>
-    <script type="text/javascript" src="/js/wangjia/wangjia_service.js"></script>
-    <script type="text/javascript" src="/js/wangjia/wangjia_rawdata.js"></script>
-    <script type="text/javascript" src="/js/wangjia/wangjia_ext.js"></script>
-    <script type="text/javascript" src="/js/wangjia/wangjia_controller_query.js"></script>
+    <script type="text/javascript" src="/js/huayuan/huayuan_service.js"></script>
+    <script type="text/javascript" src="/js/huayuan/huayuan_rawdata.js"></script>
+    <script type="text/javascript" src="/js/huayuan/huayuan_ext.js"></script>
+    <script type="text/javascript" src="/js/huayuan/huayuan_controller_query.js"></script>
 </head>
 
-<body ng-app="wangjia">
+<body ng-app="huayuan">
     <!-- 下方填單頁 -->
     <div class="jumbotron text-center">
-        <h1>市面物流-旺家</h1>
+        <h1>市面物流-華元</h1>
         <p>注意：不會處理高雄台南屏東以外地區的送貨單</p>
         
         <div class="text-center" style="margin-top: 30px">
             <button id="btnAddPage" type="button" class="btn btn-lg btn-light" onclick="javascript:location.href='add.html'">新增紀錄</button> 
             <button id="btnQueryPage" type="button" class="btn btn-lg btn-primary" onclick="javascript:location.href='query.html'">查詢紀錄</button> 
-            <button id="btnReportPage" type="button" class="btn btn-lg btn-light" onclick="javascript:window.open('https://docs.google.com/spreadsheets/d/1wmV7OOWY7erZMSmGhNwJLxKx9ouOT7Soxme0L0ru3iI/edit?usp=sharing')">瀏覽報表</button>
-            <button id="btnOthersPage" type="button" class="btn btn-lg btn-light" onclick="javascript:location.href='others.html'">其他收入</button> 
+            <button id="btnReportPage" type="button" class="btn btn-lg btn-light" onclick="javascript:window.open('')">瀏覽報表</button>
         </div>
     </div>                 
     <div class="container" ng-controller="queryForm" style="border:3px dashed #138496; padding: 20px;">
@@ -73,26 +72,26 @@
         </form>
     </div>
     <div class="container" ng-controller="resultForm" style="padding: 20px;">
-        <form id="form" ng-show="wangjias.show">
+        <form id="form" ng-show="viewDatas.show">
             <table class="table order-list table-responsive-sm">
                 <thead class="thead-light">
                     <tr>
                         <th rowspan="2">#</th>
                         <th>送貨車次</th>
-                        <th>司機姓名</th>
+                        <th>負責人員</th>
                         <th>送貨地點</th>
-                        <th>材積數</th>
+                        <th>件數</th>
                         <th>運費</th>
                     </tr>
                 </thead>
-                <tbody ng-repeat="ship in wangjias.data">
+                <tbody ng-repeat="ship in viewDatas.data">
                     <tr>
                         <th valign="center" rowspan="0">{{ $index+1 }}</th>
                         <td>
                             {{ ship.order_ID }}
                         </td>
                         <td>
-                            <textarea type="text" class="form-control" rows="3" 
+                            <textarea type="text" class="form-control" rows="1" 
                                 ng-list="&#10;" 
                                 ng-model="ship.driver" 
                                 style="width:97px;" 
@@ -105,12 +104,18 @@
                             <br>
                         </td>
                         <td>
-                            <input type="text" value="{{ship.good_size}}" ng-model="ship.good_size" style="font-size: large; margin:2px; width: 125px;"
+                            <input type="text" value="{{ship.shipUnits}}" 
+                            ng-model="ship.shipUnits"
+                            ng-change="updatePrice($index)" 
+                            style="font-size: large; margin:2px; width: 125px;"
                             />
                         </td>
                         <td>
-                            <input type="text" value="{{ship.delivery_fee }}" ng-model="ship.delivery_fee" style="font-size: large; margin:2px; width: 125px;"
-                            />
+                            <input type="text" 
+                            value="{{ship.delivery_fee }}" 
+                            ng-model="ship.delivery_fee" 
+                            style="font-size: large; margin:2px; width: 125px;"
+                            disabled/>
                         </td>
                     </tr>
                     <tr>
@@ -126,7 +131,7 @@
                         <td></td>
                         <td></td>
                         <td style="text-align: right;">
-                            <input type="button" class="btn btn-lg btn-info form-control" value="運費試算" ng-click="validateNcal(wangjias.data)" />
+                            <input type="button" class="btn btn-lg btn-info form-control" value="運費試算" ng-click="validateNcal(viewDatas.data)" />
                         </td>
 						<td>
                             <button type="submit" id="submit_btn" class="btn btn-primary btn-lg" ng-show="show.SubmitBtn" ng-click="submitForm()">單據送出</button>

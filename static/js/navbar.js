@@ -25,12 +25,12 @@ function navbar() {
 							<a class="dropdown-item" href="/kuo/add.html">郭元益</a>\
 							<a class="dropdown-item" href="/lianhua.html">聯華</a>\
 							<a class="dropdown-item" href="/wangjia/add.html">旺家</a>\
+							<a class="dropdown-item" href="/huayuan/add.html">華元</a>\
 							<div class="dropdown-divider"></div>\
 							<a class="dropdown-item disabled" href="#">立信</a>\
 							<a class="dropdown-item disabled" href="#">信可</a>\
 							<a class="dropdown-item disabled" href="#">森永</a>\
 							<a class="dropdown-item disabled" href="#">掬水軒</a>\
-							<a class="dropdown-item disabled" href="#">華元</a>\
 							<a class="dropdown-item disabled" href="#">芮程</a>\
 							<a class="dropdown-item disabled" href="#">中祥</a>\
 						</div>\

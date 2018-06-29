@@ -3,7 +3,7 @@ const drivers = [
     '朱晉廷','江明峰','江國銘','呂志偉','李佳憲','李明正','林日迴','林麒雄','吳孝豐','高自強',
     '莊羽鴻','莊智翔','郭政峰','陳政裕','陳麒任','楊文忠','鄭文豪','韓志華','黃信銨','黃聖文',
     '葉瑞煌','劉永富','石道純','朱鎮金','宋皇標','林豪群','洪基豪','高才述',
-    '張立威','張家豪','張詠鈞','陳明光','陳朝舜','楊宗波','楊宗基','呂梅良','蕭麗鳳','熊勇力','旺家-分流倉'];
+    '張立威','張家豪','張詠鈞','陳明光','陳朝舜','楊宗波','楊宗基','呂梅良','蕭麗鳳','熊勇力','分流倉'];
 
 //產生隨機值(傳入長度int)
 function randomWord(max){
@@ -161,4 +161,19 @@ function getCityAndDistrict(address = "") {
         "city": strCity,
         "district": strDistrict
     }
+}
+
+//油價計算公式
+function getDieselPriceToday($http, API = "") {
+    $http({ method: 'GET',url: API })
+        .then(function (response) {
+            if (response.status === 200) {
+                return parseInt(response.data);
+            } else {
+                throw '油價資料來源出錯 \n' + response.data;                
+            }
+        },
+        function errorCallback(response) {
+            alert('油價伺服器錯誤 \n' + response.data);
+        });
 }
