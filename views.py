@@ -171,10 +171,7 @@ def delivery_update(id):
     if request.json:
         rawdata = request.get_json(force=True)
         try:
-            if len(checkKey(rawdata, 'business_type')) > 0:
-                business_type = checkKey(rawdata, 'business_type')
-            else:
-                business_type = checkKey(rawdata, 'businesstype')
+            business_type = request.json['business_type']
             delivery.businesstype = business_type
         except:
             pass

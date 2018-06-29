@@ -141,15 +141,8 @@ myApp.controller('resultForm', function ($scope, $http, $mdDialog, myService, my
         var arrFinalData = [];
         $scope.viewDatas.data.forEach(function (x, index) {
             console.log("calcuating order #" + index + "...");
-            var submitOrder;
-            var submitShips = [];
-            submitOrder = new order();
-            submitOrder.updateduser = userID;
-            submitOrder.order_ID = x.order_ID;
-            submitOrder.ship_units = x.shipUnits;
-            submitOrder.delivery_fee = x.delivery_fee;
-            submitOrder.comment = x.comment;
-            arrFinalData.push(submitOrder);
+            x.updateduser = userID;
+            arrFinalData.push(x);
         });
         //POST request
         if ($scope.show.SubmitBtn) {

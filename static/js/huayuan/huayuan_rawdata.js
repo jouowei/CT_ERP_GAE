@@ -1,5 +1,6 @@
 //旺家單據格式
 var viewData = function(){       
+    this.business_type = '華元';       //出貨單類型
     this.order_ID = "";             //交貨單號 (日期四碼+"-"+交貨單號10碼)
     this.ship_ID = [];              //銷售單/調撥單號 
     this.shipdate = "";             //交貨日
