@@ -7,7 +7,7 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 	$scope.dieselPriceToday = "";
 	$scope.show = { TabPicker: false, DataTable: false, SubmitBtn: false};
 	$scope.getSheetName = function () {
-		$scope.oilInfo = myService.getDieselDiscount($http, document.location.origin + "/diselprice");
+		$scope.oilInfo = myService.getDieselPriceToday($http, document.location.origin + "/diselprice");
 		$scope.show.SubmitBtn = false;
 		$scope.show.DataTable = false;
 		dataParsed = new Array();
