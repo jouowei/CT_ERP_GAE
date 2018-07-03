@@ -7,7 +7,7 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 	$scope.dieselPriceToday = "";
 	$scope.show = { TabPicker: false, DataTable: false, SubmitBtn: false};
 	$scope.getSheetName = function () {
-		$scope.oilInfo = myService.getDieselPriceToday($http, document.location.origin + "/diselprice");
+		$scope.oilInfo = myService.getDieselDiscount($http, document.location.origin + "/diselprice");
 		$scope.show.SubmitBtn = false;
 		$scope.show.DataTable = false;
 		dataParsed = new Array();
@@ -42,6 +42,9 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 
 	//傳入sheetname後將資料帶出
 	$scope.parseFiles = function (sheetName, ev) {
+		if(typeof $scope.oilInfo == "undefined"){
+			$scope.oilInfo = myService.getDieselDiscount($http, document.location.origin + "/diselprice");
+		} 
 		$scope.show.SubmitBtn = false;
 		$scope.show.DataTable = false;
 		unparsedData = $scope.workbook.Sheets[sheetName];

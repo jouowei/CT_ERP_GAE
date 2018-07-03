@@ -162,18 +162,3 @@ function getCityAndDistrict(address = "") {
         "district": strDistrict
     }
 }
-
-//油價計算公式
-function getDieselPriceToday($http, API = "") {
-    $http({ method: 'GET',url: API })
-        .then(function (response) {
-            if (response.status === 200) {
-                return parseInt(response.data);
-            } else {
-                throw '油價資料來源出錯 \n' + response.data;                
-            }
-        },
-        function errorCallback(response) {
-            alert('油價伺服器錯誤 \n' + response.data);
-        });
-}
