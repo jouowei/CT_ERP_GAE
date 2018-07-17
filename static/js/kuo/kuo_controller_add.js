@@ -35,9 +35,9 @@ myApp.controller('formCtrl', function($scope,$http) {
         var arrayDistrict=new Array();
         $scope.rawdata.forEach(function(x){
             if(x.city == selectedValue) {
-                if(x.id %2 != 1){
+                if (findObjInArray(arrayDistrict, x.district).length == 0) {
                     arrayDistrict.push(x.district);
-                }                
+                }
             }
         })
         /*
