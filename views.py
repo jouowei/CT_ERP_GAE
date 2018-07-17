@@ -95,7 +95,7 @@ def add_order(rawdata):
         amount_collect = checkKey(ship,'amount_collect')#(郭元益)代收款 (旺家)手開單費用
         ship_comment = checkKey(ship,'comment')         #配送單備註
         shipUnits = checkKey(ship, 'shipUnits')         #(旺家)手開單數量
-        result_ship = Shippment.query.with_for_update().filter_by(ship_ID=ship_ID,driver=driver).first()
+        result_ship = Shippment.query.with_for_update().filter_by(order_ID=order_ID,ship_ID=ship_ID, driver=driver).first()
             # 取消檢查ship_ID是否重複，但是以下廠商在傳入時，須確保ship_ID是唯一的:
             #   1.郭元益
         if result_ship is None: 

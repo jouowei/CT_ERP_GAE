@@ -126,7 +126,7 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 			}
 			//調整後的total運費
 			orderPrice += parseInt(ship.delivery_fee); 
-			orderSize += parseInt(ship.good_size); 
+			orderSize += ship.good_size; 
 			$scope.show.SubmitBtn = true;
 		}
 		if ($scope.show.SubmitBtn) {
