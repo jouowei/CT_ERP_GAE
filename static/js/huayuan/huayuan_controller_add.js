@@ -61,7 +61,7 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 				};
 				$scope.show.DataTable = true;
 				$scope.orderUnits = parseInt(orderUnits); //整張表的總材積數
-				$scope.orderPrice = Math.round(orderPrice); //整張表的總額
+				$scope.orderPrice = orderPrice; //整張表的總額
 				$scope.before_intOrderUnits = orderPrice; //初始運費總額
 			} else {
 				myService.showAlert($mdDialog, ev, "資料錯誤", "格式不正確或檔案為空");
@@ -100,7 +100,7 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 				break;
 			}
 			//調整後的total運費
-			orderPrice += Math.round(x.delivery_fee);
+			orderPrice += x.delivery_fee;
 			orderUnits += parseInt(x.shipUnits); 
 			$scope.show.SubmitBtn = true;
 		}
@@ -115,11 +115,11 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 					$scope.show.SubmitBtn = false;
 				}
 			};
-			if (parseInt(orderPrice) != currentOrderPrice) {
+			if (orderPrice != currentOrderPrice) {
 				let confirmAns = confirm("請確認總運費金額： \n 調整前：" + currentOrderPrice +
-					"\n 調整後：" + parseInt(orderPrice));
+					"\n 調整後：" + orderPrice);
 				if (confirmAns) {
-					$scope.orderPrice = parseInt(orderPrice);
+					$scope.orderPrice = orderPrice;
 					return;
 				} else {
 					$scope.orderPrice = currentOrderPrice;

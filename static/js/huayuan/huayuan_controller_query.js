@@ -66,7 +66,7 @@ myApp.controller('resultForm', function ($scope, $http, $mdDialog, myService, my
 
     //輸入材積數後的運費計算 (目前為單一價格)
     $scope.updatePrice = function (index) {
-        $scope.viewDatas.data[index].delivery_fee = Math.round(myService.calTotalPrice($scope.viewDatas.data[index].shipUnits));
+        $scope.viewDatas.data[index].delivery_fee = myService.calTotalPrice($scope.viewDatas.data[index].shipUnits);
     };
     //資料驗證
     $scope.validateNcal = function (rawdata, ev) {

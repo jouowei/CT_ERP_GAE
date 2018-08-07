@@ -135,7 +135,7 @@
                             </td>
                             <td>總運費：
                                 <input type="button" class="btn btn-lg btn-light form-control"  
-                                value="{{orderPrice | number:0 }}" ng-model="orderPrice" readonly/>
+                                value="{{orderPrice | number:1 }}" ng-model="orderPrice" readonly/>
                             </td>
 							<td style="text-align: right;">
 								<input type="button" class="btn btn-lg btn-info form-control"  id="cal_fee" value="運費試算" ng-model="order" ng-click="validateNcal($event)" />
