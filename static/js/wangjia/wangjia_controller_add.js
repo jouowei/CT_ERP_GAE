@@ -65,7 +65,7 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 					delivery_fee -> 手動修改油價係數，調整後的運費 (一開始兩者相同)
 					*/
 					$scope.oilInfo.rate = $scope.oilInfo.initRate;
-					let initFee = parseInt(parseFloat($scope.wangjias[i].delivery_fee) * parseFloat($scope.oilInfo.initRate));
+					let initFee = parseFloat($scope.wangjias[i].delivery_fee) * parseFloat($scope.oilInfo.initRate);
 					$scope.wangjias[i].delivery_fee_before_discount = initFee;
 					$scope.wangjias[i].delivery_fee = initFee;
 					orderSize += parseFloat($scope.wangjias[i].good_size);
@@ -118,14 +118,14 @@ myApp.controller('formCtrl', function ($scope, $http, $mdDialog, myService) {
 				$scope.show.SubmitBtn = false;
 				break;
 			}
-			if(ship.data_type == "銷貨"){
+			if (findObjInArray(["銷貨", "贈品", "樣本"], ship.data_type).length > 0) {
 				//重新計算運費(原始運費 / 原始油價係數 * 新油價係數)
 				ship.delivery_fee = parseFloat(ship.delivery_fee_before_discount) / parseFloat($scope.oilInfo.initRate) * parseFloat($scope.oilInfo.rate);
 			} else if (ship.data_type == "退貨"){
 				ship.delivery_fee = parseFloat(ship.delivery_fee) / parseFloat($scope.oilInfo.initRate) * parseFloat($scope.oilInfo.rate);
 			}
 			//調整後的total運費
-			orderPrice += parseInt(ship.delivery_fee); 
+			orderPrice += parseFloat(ship.delivery_fee);
 			orderSize += ship.good_size; 
 			$scope.show.SubmitBtn = true;
 		}

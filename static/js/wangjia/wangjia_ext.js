@@ -37,7 +37,7 @@ function calculate_Price_Size(dirtys = new Array()) {
                 }
             }
             //注意：退貨單不計算材積與價格(將由使用者於介面手動輸入)
-            if (dirtydata.data_type == "銷貨") {
+            if (findObjInArray(["銷貨", "贈品", "樣本"], dirtydata.data_type).length > 0) {
             //C.計算材積與價格 (飲料:重量材，其他：體積材)
                 single_order.forEach(ship => {
                     var boolIsDrink = false;
@@ -121,7 +121,7 @@ function calTotalPrice(unit, clientType, cargo, area) {
         return (e.shipto === area && e.type === clientType && e.cargo === cargo);
     })
     for (i = 0; i < arrX.length; i++) {
-        return Math.round(arrX[i].unitprice * unit);
+        return arrX[i].unitprice * unit;
     }
 }
 

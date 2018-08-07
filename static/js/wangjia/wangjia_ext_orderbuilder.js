@@ -80,7 +80,7 @@ function orderBuilder(unparsedData) {
         //如果是配送單格式，就存成wangjia準備回傳到view
         if (!isEmpty) {
             //新增配送
-            if (fileType.add && data["交易類型"].toString() == "銷") {
+            if (fileType.add && (findObjInArray(["銷","贈","樣"], data["交易類型"].toString()).length > 0)) {
                 dirtydata.order_ID = moment(data["交貨日期"]).format('MMDD') + "_" + data["交貨單號"].toString();
                 dirtydata.ship_ID.push(data["銷售單/調撥單號"].toString());
                 dirtydata.pickupdate = moment(data["交貨單建立日期"]).format('YYYY-MM-DD');
@@ -92,7 +92,17 @@ function orderBuilder(unparsedData) {
                 dirtydata.good_pirce = data["金額(未稅)"].toString();
                 dirtydata.good_size = parseFloat(data["單品項才數"].toString()) * parseFloat(data["交貨數量"].toString());
                 dirtydata.shipUnits = parseFloat(data["交貨數量"].toString());
-                dirtydata.data_type = "銷貨";
+                switch (data["交易類型"].toString()){
+                    case "銷":
+                        dirtydata.data_type = "銷貨";
+                        break;
+                    case "贈":
+                        dirtydata.data_type = "贈品";
+                        break;
+                    case "樣":
+                        dirtydata.data_type = "樣本";
+                        break;
+                }
                 //針對縣市做字串處理
                 let location = getCityAndDistrict(data["收貨地址"]);
                 if (typeof location == "undefined"){
